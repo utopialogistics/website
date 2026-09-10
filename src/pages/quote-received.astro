@@ -1,0 +1,156 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title="Quote Request Received"
+  description="Your freight quote request has reached Utopia Logistics dispatch. Here is what happens next and how to reach us in the meantime."
+  noindex
+>
+  <PageHero
+    eyebrow="Quote request received"
+    title={'Thank you.\nYour request is with dispatch.'}
+    description="We have your shipment details. A member of the Utopia Logistics dispatch team will be in touch to discuss the trip and confirm availability for your route."
+  />
+  <section class="section">
+    <div class="container received-grid">
+      <div>
+        <p class="eyebrow">What happens next</p>
+        <h2 class="section-title">
+          From your details
+          <br />
+          to the conversation.
+        </h2>
+        <ol class="numbered-list">
+          <li>
+            <span>01</span>
+            <div>
+              <strong>We read the details.</strong>
+              <br />
+              Dispatch reviews your route, freight, timing, and any requirements
+              you flagged at either end.
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <strong>We get in touch.</strong>
+              <br />
+              We contact you using the email address or phone number you
+              provided, so we can talk the shipment through.
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <strong>We confirm what is possible.</strong>
+              <br />
+              Route availability, equipment, timing, and pricing are all
+              confirmed with you before anything is arranged.
+            </div>
+          </li>
+        </ol>
+        <p class="inline-note">
+          Sending this request does not confirm a booking, a rate, or route
+          availability. Nothing is arranged until dispatch confirms it with you.
+        </p>
+      </div>
+      <aside class="received-help">
+        <span class="green-dot"></span>
+        <h3>Need to reach us sooner?</h3>
+        <p>
+          If your shipment is time-sensitive, or you need to correct something
+          you just sent, call or email dispatch directly and mention your pickup
+          and delivery cities.
+        </p>
+        <a href={site.phoneHref} class="received-phone">
+          {site.phone} <Icon name="diagonal" size={15} />
+        </a>
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        <div class="received-links">
+          <a href="/services/" class="text-link">
+            Explore our services <Icon size={17} />
+          </a>
+          <a href="/faq/" class="text-link">
+            Frequently asked questions <Icon size={17} />
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .received-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 70px;
+    align-items: start;
+  }
+  .received-grid .numbered-list {
+    margin-top: 38px;
+  }
+  .received-grid .inline-note {
+    margin-top: 26px;
+  }
+  .received-help {
+    padding: 35px;
+    background: var(--light);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+  }
+  .received-help h3 {
+    margin-top: 16px;
+    font-size: 24px;
+    font-weight: 550;
+    letter-spacing: -0.6px;
+  }
+  .received-help > p {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--muted);
+  }
+  .received-help > a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .received-help > a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .received-phone {
+    font-size: 20px !important;
+    letter-spacing: -0.5px;
+  }
+  .received-links {
+    display: grid;
+    gap: 18px;
+    justify-items: start;
+    margin-top: 30px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 980px) {
+    .received-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 45px;
+    }
+  }
+  @media (max-width: 480px) {
+    .received-help {
+      padding: 26px;
+    }
+    .received-help h3 {
+      font-size: 22px;
+    }
+  }
+</style>

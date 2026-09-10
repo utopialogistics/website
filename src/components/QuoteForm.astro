@@ -4,9 +4,22 @@ interface Props {
   endpoint?: string;
   email?: string;
   id?: string;
+  /** Render Netlify Forms attributes and post to `successUrl`. */
+  netlify?: boolean;
+  /** Netlify form name; must match the hidden `form-name` value. */
+  netlifyName?: string;
+  /** Page Netlify redirects to after accepting a submission. */
+  successUrl?: string;
 }
 
-const { endpoint = '', email = '', id = 'quote-request' } = Astro.props;
+const {
+  endpoint = '',
+  email = '',
+  id = 'quote-request',
+  netlify = false,
+  netlifyName = 'quote-request',
+  successUrl = '/quote-received/',
+} = Astro.props;
 const destination = endpoint.trim();
 if (
   destination &&
@@ -17,6 +30,11 @@ if (
     'QuoteForm endpoint must be an HTTPS URL or a same-origin path beginning with /.',
   );
 }
+// An explicit endpoint overrides Netlify, so only one provider is ever wired up.
+const useNetlify = netlify && !destination;
+// True when the form actually delivers, rather than preparing an email draft.
+const delivers = useNetlify || Boolean(destination);
+const postTarget = useNetlify ? successUrl : destination || undefined;
 const fieldId = (name: string) => `${id}-${name}`;
 
 const shipmentTypes = [
@@ -74,13 +92,26 @@ const locationRequirements = [
     </p>
   </div>
   <form
-    action={destination || undefined}
+    name={useNetlify ? netlifyName : undefined}
+    action={postTarget}
     method="post"
-    novalidate
-    data-endpoint={destination}
+    data-netlify={useNetlify ? 'true' : undefined}
+    data-netlify-honeypot={useNetlify ? 'bot-field' : undefined}
+    data-delivers={delivers ? 'true' : undefined}
     aria-label="Freight quote request"
   >
-    <fieldset class="form-content" disabled data-form-content>
+    {useNetlify && (
+      <>
+        <input type="hidden" name="form-name" value={netlifyName} />
+        <p class="honeypot" hidden aria-hidden="true">
+          <label>
+            Do not fill this in if you are human
+            <input name="bot-field" tabindex="-1" autocomplete="off" />
+          </label>
+        </p>
+      </>
+    )}
+    <fieldset class="form-content" disabled={!delivers} data-form-content>
       <legend class="sr-only">Freight quote request</legend>
       <div
         class="error-summary"
@@ -565,8 +596,8 @@ const locationRequirements = [
       </datalist>
       <div class="form-bottom">
         <p class="mode-note" id={fieldId('mode')}>
-          {destination
-            ? 'Route availability and shipment details are subject to confirmation.'
+          {delivers
+            ? 'Nothing is sent yet — you can check every detail on the next screen first. Route availability and shipment details are subject to confirmation.'
             : email
               ? 'Review your request, then send it from your email app. This form does not send automatically.'
               : 'Preview mode — requests are not sent.'}
@@ -576,7 +607,7 @@ const locationRequirements = [
           type="submit"
           aria-describedby={fieldId('mode')}
         >
-          {destination ? 'Request a Quote' : 'Review Quote Request'}
+          Review Quote Request
           <svg
             viewBox="0 0 24 24"
             width="20"
@@ -597,8 +628,9 @@ const locationRequirements = [
     </fieldset>
     <noscript>
       <p class="no-script">
-        Please enable JavaScript to complete and review your quote request. No
-        request has been sent.
+        {delivers
+          ? 'JavaScript is off, so the on-page review step is unavailable. Submitting this form sends your request straight to Utopia Logistics dispatch.'
+          : 'Please enable JavaScript to complete and review your quote request. No request has been sent.'}
       </p>
     </noscript>
   </form>
@@ -624,12 +656,42 @@ const locationRequirements = [
     </h4>
     <p class="review-notice">
       This request has <strong>not been sent</strong>.{' '}
-      {email
-        ? `Check your details, then open an email draft to ${email}. Review and send it from your email app.`
-        : 'Review your details and download a copy for your records.'}
+      {delivers
+        ? 'Check the details below, then send it to Utopia Logistics dispatch.'
+        : email
+          ? `Check your details, then open an email draft to ${email}. Review and send it from your email app.`
+          : 'Review your details and download a copy for your records.'}
     </p>
     <dl class="review-details" data-review-details></dl>
-    {email && (
+    {delivers && (
+      <div class="send-actions">
+        <button type="button" class="submit-button" data-send>
+          Send Request to Dispatch
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M4 12h15m-6-6 6 6-6 6"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <p class="send-status" role="status" data-send-status></p>
+        <p class="email-help">
+          Sending shares these details with Utopia Logistics dispatch. It does
+          not confirm a booking, a rate, or route availability. Prefer to talk
+          it through? Call <a href="tel:+14374840017">+1 (437) 484-0017</a>.
+        </p>
+      </div>
+    )}
+    {!delivers && email && (
       <div class="email-draft-actions">
         <p data-email-note class="email-note"></p>
         <a
@@ -700,15 +762,22 @@ const locationRequirements = [
         )
           return;
 
-        // Radios and checkboxes are summarised as groups, so they are excluded
-        // from the per-field validation pass.
+        // Native validation is replaced by the in-page error summary below.
+        // Without JavaScript the attribute is absent, so the browser validates.
+        form.noValidate = true;
+        // Radios and checkboxes are summarised as groups; the Netlify plumbing
+        // fields carry no user input. All are excluded from the validation pass.
         const fields = Array.from(
           form.querySelectorAll<QuoteField>('input, textarea, select'),
         ).filter(
           (field) =>
+            field.name !== 'bot-field' &&
+            field.name !== 'form-name' &&
             !(
               field instanceof HTMLInputElement &&
-              (field.type === 'radio' || field.type === 'checkbox')
+              (field.type === 'radio' ||
+                field.type === 'checkbox' ||
+                field.type === 'hidden')
             ),
         );
         const labels: Record<string, string> = {
@@ -950,15 +1019,14 @@ const locationRequirements = [
         };
 
         form.addEventListener('submit', (event) => {
+          // Every mode reviews first. The send button below calls form.submit(),
+          // which does not re-enter this handler.
+          event.preventDefault();
           submitted = true;
           if (renderErrors().length) {
-            event.preventDefault();
             summary.focus();
             return;
           }
-          // A configured provider handles its own result page and delivery confirmation.
-          if (form.dataset.endpoint) return;
-          event.preventDefault();
 
           reviewDetails.replaceChildren();
           const lines = [
@@ -1025,6 +1093,15 @@ const locationRequirements = [
         form.addEventListener('change', () => {
           if (submitted) renderErrors();
         });
+        // Delivering modes post the form for real once the visitor confirms.
+        const sendButton = root.querySelector<HTMLButtonElement>('[data-send]');
+        sendButton?.addEventListener('click', () => {
+          if (sendButton.disabled) return;
+          sendButton.disabled = true;
+          const status = root.querySelector<HTMLElement>('[data-send-status]');
+          if (status) status.textContent = 'Sending your request…';
+          form.submit();
+        });
         root.querySelector('[data-edit]')?.addEventListener('click', () => {
           review.hidden = true;
           content.hidden = false;
@@ -1064,10 +1141,23 @@ const locationRequirements = [
 </script>
 
 <style>
-  .email-draft-actions {
+  .email-draft-actions,
+  .send-actions {
     margin-bottom: 22px;
     padding-bottom: 22px;
     border-bottom: 1px solid #dce2e9;
+  }
+  .send-status {
+    margin: 12px 0 0;
+    color: #616b79;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .send-status:empty {
+    display: none;
+  }
+  .honeypot {
+    display: none;
   }
   .email-draft-link {
     text-decoration: none;

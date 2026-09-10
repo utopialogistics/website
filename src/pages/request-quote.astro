@@ -43,13 +43,13 @@ import { site } from '../data/site';
             <span>03</span>
             <div>
               <strong>
-                {site.quoteEndpoint
-                  ? 'Send your enquiry.'
+                {site.quoteEndpoint || site.quoteForm.netlify
+                  ? 'Send it to dispatch.'
                   : 'Send it from your email app.'}
               </strong>
               <p>
-                {site.quoteEndpoint
-                  ? 'Dispatch will receive your enquiry through the connected form service.'
+                {site.quoteEndpoint || site.quoteForm.netlify
+                  ? 'Press send on the review screen and your request reaches dispatch directly.'
                   : 'Open the prepared email, then review and send it to dispatch.'}
               </p>
             </div>
@@ -71,7 +71,13 @@ import { site } from '../data/site';
           Quote questions, answered <Icon size={17} />
         </a>
       </aside>
-      <QuoteForm endpoint={site.quoteEndpoint} email={site.email} />
+      <QuoteForm
+        endpoint={site.quoteEndpoint}
+        netlify={site.quoteForm.netlify}
+        netlifyName={site.quoteForm.name}
+        successUrl={site.quoteForm.successUrl}
+        email={site.email}
+      />
     </div>
   </section>
 </Layout>

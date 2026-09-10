@@ -6,6 +6,22 @@ export const site = {
     'Canada-based trucking transportation across North America. Explore Utopia Logistics Inc. full truckload, LTL, cross-border, and long-haul services, and plan your next freight shipment.',
   url: import.meta.env.PUBLIC_SITE_URL || '',
   quoteEndpoint: import.meta.env.PUBLIC_QUOTE_ENDPOINT || '',
+  /**
+   * Quote submissions are delivered by Netlify Forms.
+   *
+   * `name` must match the form's `name` attribute and its hidden `form-name`
+   * field; Netlify labels submissions in the dashboard with it. `successUrl`
+   * is the page Netlify redirects to once a submission is accepted.
+   *
+   * Setting PUBLIC_QUOTE_ENDPOINT points the form at a different provider and
+   * takes precedence over this. Netlify Forms only run on a Netlify deploy —
+   * a local `astro dev` server does not accept the POST.
+   */
+  quoteForm: {
+    netlify: true,
+    name: 'quote-request',
+    successUrl: '/quote-received/',
+  },
   email: 'dispatch@utopialogistics.ca',
   phone: '+1 (437) 484-0017',
   phoneHref: 'tel:+14374840017',

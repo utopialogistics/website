@@ -221,7 +221,7 @@ export const faqs = [
     category: 'Getting started',
     question: 'How do I request a freight quote?',
     answer:
-      'Use the Request a Quote page to enter your shipment type, pickup and delivery locations, freight details, preferred dates, and contact information. Review the request and open it in your email app to send to dispatch@utopialogistics.ca. You can also call +1 (437) 484-0017.',
+      'Use the Request a Quote page to enter your shipment type, pickup and delivery locations, freight details, preferred dates, and contact information. You will see a review screen with everything you entered; press Send Request to Dispatch and it reaches our team directly. You can also email dispatch@utopialogistics.ca or call +1 (437) 484-0017.',
   },
   {
     category: 'Getting started',
@@ -269,18 +269,18 @@ export const faqs = [
     category: 'Your quote request',
     question: 'Has my request been sent when I see the review screen?',
     answer:
-      'No. The review screen shows the details you have prepared. Choose the email option, then review and send the message from your email app. You can also download the request and attach it to an email yourself.',
+      'Not yet. The review screen is the last check before anything leaves your browser. Nothing is sent until you press Send Request to Dispatch. You can edit any detail first, or download a copy of the request for your own records.',
   },
   {
     category: 'Your quote request',
-    question: 'What if the email button does not open an app?',
+    question: 'What happens after I send my request?',
     answer:
-      'Download your request, then open your preferred email service and send it to dispatch@utopialogistics.ca. Include the downloaded file as an attachment. You can also call dispatch to discuss the trip.',
+      'You are taken to a confirmation page, and your request reaches Utopia Logistics dispatch. A member of the team will contact you using the email address or phone number you provided, to discuss the shipment and confirm availability for your route. Sending a request does not confirm a booking, a rate, or route availability.',
   },
   {
     category: 'Your quote request',
     question: 'Can I change details after sending an enquiry?',
     answer:
-      'Email dispatch@utopialogistics.ca or call +1 (437) 484-0017 with the original pickup and delivery locations and the details that have changed, so the team can identify your enquiry.',
+      'Yes. Email dispatch@utopialogistics.ca or call +1 (437) 484-0017 with the original pickup and delivery locations and the details that have changed, so the team can identify your enquiry. You can also send a fresh request and say that it replaces the earlier one.',
   },
 ];

@@ -2,11 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import PageHero from '../components/PageHero.astro';
 import { site } from '../data/site';
+const netlifyForms = site.quoteForm.netlify && !site.quoteEndpoint;
 ---
 
 <Layout
   title="Website Privacy"
-  description="How the Utopia Logistics website handles information when you prepare a freight enquiry, open an email draft, or follow a map link."
+  description="How the Utopia Logistics website handles information when you prepare and send a freight quote request, download a copy, or follow a map link."
 >
   <PageHero
     eyebrow="Privacy"
@@ -18,40 +19,79 @@ import { site } from '../data/site';
       <section>
         <h2>Preparing a quote request</h2>
         <p>
-          The quote form asks for your name, company, email, shipment route,
-          preferred date, and freight description. Phone, estimated weight, and
-          additional details are optional. These details help describe the
-          shipment you want to discuss.
+          The quote form asks for your name, company, and email address, your
+          pickup and delivery locations, and a description of the freight it
+          concerns. Phone, province or state, postal or ZIP code, pallet or
+          package count, dimensions, weight, stackability, equipment requests,
+          dates, location requirements, and additional notes are optional. These
+          details describe the shipment you want to discuss.
         </p>
-        {site.quoteEndpoint ? (
+        <p>
+          Nothing leaves your browser while you fill the form in. Your entries
+          are shown back to you on a review screen first, and are transmitted
+          only when you choose to send the request. Entries are not saved in
+          browser storage, so refreshing or leaving the page may clear them.
+        </p>
+      </section>
+      <section>
+        <h2>Where your request goes</h2>
+        {netlifyForms ? (
+          <>
+            <p>
+              This website is hosted on Netlify, and quote requests are
+              delivered by Netlify Forms. When you send a request, the details
+              you entered are transmitted to Netlify, Inc., which stores the
+              submission and makes it available to Utopia Logistics dispatch.
+              Netlify also records technical information such as your IP address
+              and the time of submission, and applies automated spam filtering.
+              That filtering includes a hidden field the form asks you to leave
+              empty; genuine submissions are unaffected by it.
+            </p>
+            <p>
+              Netlify is based in the United States, so your request is
+              processed and stored outside Canada. Netlify acts as our service
+              provider for handling these submissions. Their handling of the
+              data is described in the{' '}
+              <a
+                href="https://www.netlify.com/privacy/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Netlify privacy policy
+              </a>
+              .
+            </p>
+            <p>
+              Utopia Logistics uses these details to respond to your enquiry and
+              discuss the shipment. Contact dispatch if you want to correct a
+              request, ask for it to be deleted, or confirm that it arrived.
+            </p>
+          </>
+        ) : site.quoteEndpoint ? (
           <p>
-            When you submit the form, your information is sent to the connected
-            enquiry service for processing. Its response page provides the
-            submission result. Contact dispatch if you need to verify that your
-            enquiry was received.
+            When you send the form, your information is transmitted to the
+            connected enquiry service for processing. Its response page provides
+            the submission result. Contact dispatch if you need to verify that
+            your enquiry was received.
           </p>
         ) : (
           <p>
             Preparing and reviewing a request happens in your browser. The
-            website does not send those form details to dispatch automatically
-            or save them in browser storage. Refreshing or leaving the page may
-            clear your entries.
+            website does not send those form details to dispatch automatically.
           </p>
         )}
       </section>
       <section>
-        <h2>Email drafts and downloads</h2>
+        <h2>Downloads, email, and phone</h2>
         <p>
-          Opening a prepared email passes its contents to your email app. You
-          decide whether to send it. Once sent, the information is handled
-          through the email services used by you and Utopia Logistics. A
-          downloaded request is a text file saved by your browser; you control
+          The review screen offers a copy of your request as a text file saved
+          by your browser. That download happens on your device, and you control
           where you keep or share it.
         </p>
         <p>
-          For a longer request, the website asks you to download the full text
-          and attach it to your email. No shipment information needs to be
-          omitted from your enquiry.
+          If you email or call dispatch instead of using the form, the
+          information is handled through the email and telephone services used
+          by you and Utopia Logistics rather than through this website.
         </p>
       </section>
       <section>
