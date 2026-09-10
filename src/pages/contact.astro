@@ -1,0 +1,278 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title="Contact Dispatch in Milton, Ontario"
+  description={`Contact Utopia Logistics at ${site.phone}, ${site.email}, or ${site.address}. Discuss your freight shipment with dispatch.`}
+>
+  <PageHero
+    eyebrow="Contact us"
+    title={'A conversation away.\nA journey ahead.'}
+    description="Have a route in mind or a shipment to discuss? Get in touch with Utopia Logistics. Start with the details you have, and let’s talk about what comes next."
+  />
+  <section class="section">
+    <div class="container contact-grid">
+      <div class="contact-intro">
+        <p class="eyebrow">Let’s talk freight</p>
+        <h2 class="section-title">
+          Reach our
+          <br />
+          dispatch team.
+        </h2>
+        <p>
+          For shipment enquiries, route discussions, or updates to a request,
+          reach us by phone or email.
+        </p>
+        <a href="/request-quote/" class="button button-primary">
+          Prepare a Quote Request <Icon size={18} />
+        </a>
+      </div>
+      <div class="contact-methods">
+        <a href={site.phoneHref}>
+          <div class="contact-icon">
+            <Icon name="phone" size={24} />
+          </div>
+          <div>
+            <span>CALL DISPATCH</span>
+            <h3>{site.phone}</h3>
+            <p>Talk through your route and shipment.</p>
+          </div>
+          <Icon name="diagonal" size={23} />
+        </a>
+        <a href={`mailto:${site.email}`}>
+          <div class="contact-icon">
+            <Icon name="mail" size={24} />
+          </div>
+          <div>
+            <span>EMAIL DISPATCH</span>
+            <h3>{site.email}</h3>
+            <p>Send us the details of your next move.</p>
+          </div>
+          <Icon name="diagonal" size={23} />
+        </a>
+        <a href={site.mapsUrl} target="_blank" rel="noopener noreferrer">
+          <div class="contact-icon">
+            <Icon name="pin" size={24} />
+          </div>
+          <div>
+            <span>OUR ADDRESS</span>
+            <h3>
+              {site.street}
+              <br />
+              {site.locality}
+            </h3>
+            <p>
+              Canada · View on Google Maps
+              <span class="sr-only"> (opens a new tab)</span>
+            </p>
+          </div>
+          <Icon name="diagonal" size={23} />
+        </a>
+      </div>
+    </div>
+  </section>
+  <section class="section light-section">
+    <div class="container split-grid">
+      <div class="contact-photo">
+        <img
+          src="/images/freight-road.webp"
+          alt="A tractor-trailer on a highway through an open North American landscape"
+          width="1200"
+          height="737"
+          loading="lazy"
+        />
+        <span>YOUR FREIGHT. THE ROAD AHEAD.</span>
+      </div>
+      <div class="split-copy">
+        <p class="eyebrow">Make the first conversation count</p>
+        <h2 class="section-title">
+          A little detail
+          <br />
+          goes a long way.
+        </h2>
+        <p class="body-copy">
+          Include your pickup and delivery locations, a description of your
+          freight, and your preferred dates. If you have dimensions, quantity,
+          or an estimated weight, share those too.
+        </p>
+        <p class="body-copy">
+          Following up on an enquiry? Include your original route and company
+          name so dispatch can identify the request.
+        </p>
+        <a href="/faq/" class="text-link">
+          Answers to common questions <Icon size={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+  <CtaBand title="Ready when you have a route." />
+</Layout>
+<style>
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.35fr;
+    gap: 90px;
+    align-items: start;
+  }
+  .contact-intro h2 {
+    margin-top: 20px;
+  }
+  .contact-intro > p:not(.eyebrow) {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 25px;
+    max-width: 370px;
+    line-height: 1.9;
+  }
+  .contact-intro > .button {
+    margin-top: 30px;
+    font-size: 11px;
+  }
+  .contact-methods > a {
+    display: flex;
+    align-items: center;
+    gap: 23px;
+    border-bottom: 1px solid var(--line);
+    padding: 28px 0;
+  }
+  .contact-methods > a:first-child {
+    padding-top: 0;
+  }
+  .contact-methods > a > svg {
+    margin-left: auto;
+    color: var(--blue);
+    flex: none;
+  }
+  .contact-icon {
+    width: 57px;
+    height: 57px;
+    background: var(--light);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--blue);
+    flex: none;
+  }
+  .contact-methods span {
+    font-size: 8px;
+    letter-spacing: 1.6px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .contact-methods h3 {
+    font-size: 26px;
+    font-weight: 550;
+    letter-spacing: -0.8px;
+    margin-top: 11px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  .contact-methods p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .contact-methods a:hover h3 {
+    color: var(--blue);
+  }
+  .contact-photo {
+    position: relative;
+  }
+  .contact-photo img {
+    width: 100%;
+    height: 370px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .contact-photo span {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    background: #fff;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    padding: 13px 17px;
+  }
+  @media (max-width: 980px) {
+    .contact-grid {
+      gap: 40px;
+      grid-template-columns: 0.8fr 1.2fr;
+    }
+    .contact-methods h3 {
+      font-size: 22px;
+    }
+    .contact-methods > a {
+      gap: 18px;
+    }
+    .contact-icon {
+      width: 44px;
+      height: 44px;
+    }
+    .contact-methods > a > svg {
+      width: 18px;
+    }
+  }
+  @media (max-width: 700px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .contact-intro > p:not(.eyebrow) {
+      max-width: 500px;
+    }
+    .contact-methods h3 {
+      font-size: 25px;
+    }
+    .contact-methods > a {
+      padding-block: 28px;
+    }
+  }
+  @media (max-width: 480px) {
+    .contact-methods > a {
+      gap: 15px;
+    }
+    .contact-methods h3 {
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+    .contact-methods > a > svg {
+      width: 16px;
+    }
+    .contact-icon {
+      width: 37px;
+      height: 37px;
+    }
+    .contact-icon > svg {
+      width: 19px;
+    }
+    .contact-methods p {
+      font-size: 10px;
+    }
+    .contact-methods span {
+      font-size: 7px;
+    }
+    .contact-photo img {
+      height: 270px;
+    }
+    .contact-intro > p:not(.eyebrow) {
+      font-size: 13px;
+    }
+  }
+  @media (max-width: 360px) {
+    .contact-methods > a {
+      gap: 11px;
+    }
+    .contact-methods h3 {
+      font-size: 17px;
+    }
+    .contact-methods > a > svg {
+      display: none;
+    }
+  }
+</style>

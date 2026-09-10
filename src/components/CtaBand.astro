@@ -1,0 +1,30 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+const {
+  title = 'The next move is yours.',
+  description = 'Tell us where your freight needs to go. Let’s take it from there.',
+  eyebrow = 'Let’s move forward',
+  ctaLabel = 'Request a Quote',
+  ctaHref = '/request-quote/',
+} = Astro.props;
+---
+
+<section class="cta-band">
+  <div class="container cta-inner">
+    <div>
+      <p class="eyebrow">{eyebrow}</p>
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+    <div class="cta-actions">
+      <a href={ctaHref} class="button button-white">
+        {ctaLabel} <Icon size={19} />
+      </a>
+      <a href={site.phoneHref} class="cta-phone">
+        <Icon name="phone" size={16} />
+        {site.phone}
+      </a>
+    </div>
+  </div>
+</section>

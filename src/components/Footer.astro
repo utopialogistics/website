@@ -1,0 +1,80 @@
+---
+import { site, services } from '../data/site';
+import Icon from './Icon.astro';
+---
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-intro">
+      <a class="footer-logo" href="/" aria-label="Utopia Logistics home">
+        <img
+          src="/images/utopia-logo.svg"
+          alt="Utopia Logistics Inc."
+          width="1695"
+          height="293"
+          loading="lazy"
+        />
+      </a>
+      <p>
+        Canadian roots.
+        <br />A North American outlook.
+      </p>
+      <span class="footer-location">
+        <span class="green-dot"></span> Based in Canada · Serving North America
+      </span>
+    </div>
+    <div>
+      <h2>Explore</h2>
+      <nav aria-label="Footer navigation">
+        <a href="/about/">About Utopia</a>
+        <a href="/coverage/">Our coverage</a>
+        <a href="/faq/">Frequently asked questions</a>
+        <a href="/contact/">Contact us</a>
+        <a href="/request-quote/">Request a quote</a>
+      </nav>
+    </div>
+    <div>
+      <h2>Transportation</h2>
+      <nav aria-label="Transportation services">
+        {services.map((service) => (
+          <a href={`/services/${service.slug}/`}>{service.shortTitle}</a>
+        ))}
+        <a href="/services/">
+          All services <Icon name="diagonal" size={13} />
+        </a>
+      </nav>
+    </div>
+    <div class="footer-contact">
+      <h2>Let’s talk freight.</h2>
+      <a class="footer-phone" href={site.phoneHref}>
+        {site.phone}
+      </a>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <address>
+        {site.street}
+        <br />
+        {site.locality}
+        <br />
+        Canada
+      </address>
+      <a
+        href={site.mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="directions-link"
+      >
+        Get directions <Icon name="diagonal" size={14} />
+        <span class="sr-only"> (opens a new tab)</span>
+      </a>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>
+      © {new Date().getFullYear()} {site.name} All rights reserved.
+    </p>
+    <a href="/privacy/">Privacy</a>
+    <a href="#top" class="back-top">
+      Back to top <Icon name="up" size={15} />
+    </a>
+  </div>
+</footer>

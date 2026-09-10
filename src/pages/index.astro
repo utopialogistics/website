@@ -1,11 +1,812 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Icon from '../components/Icon.astro';
+import RoutePlanner from '../components/RoutePlanner.astro';
+import CtaBand from '../components/CtaBand.astro';
+import FaqList from '../components/FaqList.astro';
+import { site, services, steps } from '../data/site';
+import { faqs } from '../data/content';
 ---
 
 <Layout>
-	<Welcome />
+  <section class="home-hero" aria-labelledby="hero-title">
+    <picture>
+      <source
+        media="(max-width:600px)"
+        srcset="/images/hero-truck-mobile.webp"
+      />
+      <img
+        src="/images/hero-truck.webp"
+        alt="White semi-truck on a mountain highway beneath snow-capped peaks"
+        width="1920"
+        height="1086"
+        fetchpriority="high"
+      />
+    </picture>
+    <div class="container hero-inner">
+      <div class="hero-topline">
+        <p class="eyebrow">
+          <span class="green-dot"></span> Canada based. North America bound.
+        </p>
+        <span class="hero-coordinate">THE JOURNEY / STARTS HERE</span>
+      </div>
+      <h1 id="hero-title">
+        Your freight.
+        <br />
+        <span>The road ahead.</span>
+      </h1>
+      <div class="hero-bottom">
+        <div>
+          <p>{site.hero.description}</p>
+          <div class="hero-actions">
+            <a href="/request-quote/" class="button button-white">
+              Request a Quote <Icon size={18} />
+            </a>
+            <a href="/services/" class="hero-text-link">
+              Explore our services <Icon name="diagonal" size={18} />
+            </a>
+          </div>
+        </div>
+        <div class="hero-marker" aria-hidden="true">
+          <span>01 /</span>
+          <div>
+            ROOTED IN CANADA.
+            <br />
+            READY FOR THE ROAD.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="container home-route">
+    <RoutePlanner />
+  </div>
+
+  <section class="section home-services" id="services">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">The right starting point</p>
+          <h2 class="section-title">
+            Different routes.
+            <br />
+            <em>One conversation.</em>
+          </h2>
+        </div>
+        <p>
+          Full truckloads, smaller LTL shipments, cross-border trips, and the
+          long haul. Find the option that fits your freight.
+        </p>
+      </div>
+      <div class="home-service-grid">
+        {services.map((service) => (
+          <a class="home-service" href={`/services/#${service.slug}`}>
+            <div class="home-service-top">
+              <span>{service.number} /</span>
+              <Icon name={service.icon} size={22} />
+            </div>
+            <h3>{service.shortTitle}</h3>
+            <p>{service.summary}</p>
+            <div class="home-service-image">
+              <img
+                src={service.image}
+                alt={service.alt}
+                width="600"
+                height="370"
+                loading="lazy"
+                decoding="async"
+                style={`object-position:${service.position}`}
+              />
+              <span>{service.label}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <div class="services-bottom">
+        <span>Start with your route. We’ll discuss the details.</span>
+        <a href="/services/" class="text-link">
+          All transportation services <Icon size={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section home-coverage" id="coverage">
+    <div class="container split-grid">
+      <div class="coverage-copy">
+        <p class="eyebrow">Our coverage</p>
+        <h2 class="section-title">
+          Canadian roots.
+          <br />A bigger horizon.
+        </h2>
+        <p>
+          Based in Milton, Ontario. Moving freight across North America. Tell us
+          where your shipment starts and where it needs to go.
+        </p>
+        <div class="coverage-regions">
+          <span>CANADA</span>
+          <span>CROSS-BORDER</span>
+          <span>LONG-HAUL</span>
+        </div>
+        <a href="/coverage/" class="button button-white">
+          Explore Our Coverage <Icon name="diagonal" size={18} />
+        </a>
+        <p class="coverage-small">
+          Specific lanes and availability are confirmed for each shipment.
+        </p>
+      </div>
+      <div class="home-map">
+        <div>
+          <span class="green-dot"></span>
+          <span>NORTH AMERICA / OUR OUTLOOK</span>
+        </div>
+        <img
+          src="/images/north-america.svg"
+          alt="Map of North America showing Canada, the United States, and Mexico; individual routes are subject to confirmation"
+          width="840"
+          height="720"
+          loading="lazy"
+        />
+        <span class="map-footnote">
+          Broad regional coverage. Let’s discuss your route.
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="container split-grid">
+      <div class="photo-frame">
+        <img
+          src="/images/trucking-detail.webp"
+          alt="White tractor-trailer travelling along a forest-lined road in British Columbia"
+          width="1100"
+          height="880"
+          loading="lazy"
+        />
+        <div class="photo-note">
+          <span class="green-dot"></span>
+          <strong>From Ontario. With a North American outlook.</strong>
+          <Icon name="diagonal" size={22} />
+        </div>
+      </div>
+      <div class="split-copy">
+        <p class="eyebrow">Meet Utopia Logistics</p>
+        <h2 class="section-title">
+          It starts with
+          <br />
+          your next move.
+        </h2>
+        <p class="body-copy">
+          We’re a Canadian trucking company with a straightforward starting
+          point: understand the route, the load, and what your shipment needs.
+        </p>
+        <p class="body-copy">
+          From our base in Milton, Ontario, Utopia Logistics Inc. provides
+          trucking transportation across North America. Let’s talk about the
+          road ahead for your business.
+        </p>
+        <a href="/about/" class="text-link">
+          The company behind the journey <Icon size={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section light-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">A clear way forward</p>
+          <h2 class="section-title">
+            Your next trip.
+            <br />
+            Three simple steps.
+          </h2>
+        </div>
+        <a href="/request-quote/" class="text-link">
+          Start your quote <Icon size={18} />
+        </a>
+      </div>
+      <div class="process-grid">
+        {steps.map((step) => (
+          <div class="process-step">
+            <span>{step.number} /</span>
+            <Icon name={step.icon} size={25} />
+            <h3>{step.title}</h3>
+            <p>{step.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container faq-section-grid">
+      <div>
+        <p class="eyebrow">Before you hit send</p>
+        <h2 class="section-title">
+          A few things
+          <br />
+          you might ask.
+        </h2>
+        <a href="/faq/" class="text-link">
+          All frequently asked questions <Icon size={18} />
+        </a>
+      </div>
+      <FaqList items={[faqs[0], faqs[1], faqs[3]]} />
+    </div>
+  </section>
+  <CtaBand />
 </Layout>
+<style>
+  .home-hero {
+    position: relative;
+    isolation: isolate;
+    background: var(--navy);
+    color: #fff;
+    min-height: 640px;
+    margin: 16px 16px 0;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .home-hero > picture {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .home-hero > picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+  }
+  .home-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      90deg,
+      #101e31e8 0%,
+      #101e31b3 37%,
+      #101e3145 75%,
+      #101e3120
+    );
+  }
+  .hero-inner {
+    padding-top: 56px;
+    padding-bottom: 90px;
+  }
+  .hero-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+  }
+  .hero-topline .eyebrow {
+    color: #fff;
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+  .hero-topline .eyebrow::before {
+    display: none;
+  }
+  .hero-coordinate {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    color: #e0e6ef;
+  }
+  .home-hero h1 {
+    font-size: clamp(65px, 7.2vw, 102px);
+    line-height: 1.08;
+    letter-spacing: -4.5px;
+    font-weight: 550;
+    margin-top: 36px;
+  }
+  .home-hero h1 > span {
+    font-weight: 450;
+  }
+  .hero-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 50px;
+    margin-top: 25px;
+  }
+  .hero-bottom > div > p {
+    max-width: 460px;
+    font-size: 13px;
+    color: #e4eaf3;
+    line-height: 1.85;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin-top: 27px;
+  }
+  .hero-text-link {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #ffffff60;
+    padding-bottom: 9px;
+  }
+  .hero-marker {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #fff;
+    padding-bottom: 2px;
+  }
+  .hero-marker > span {
+    font-size: 40px;
+    font-family: 'Manrope Variable', sans-serif;
+    font-weight: 400;
+  }
+  .hero-marker > div {
+    font-size: 8px;
+    line-height: 1.9;
+    letter-spacing: 1.5px;
+  }
+  .home-route {
+    position: relative;
+    margin-top: -43px;
+    z-index: 2;
+  }
+  .home-services {
+    padding-top: 80px;
+  }
+  .home-service-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .home-service {
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+  }
+  .home-service-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .home-service-top > span {
+    font-size: 10px;
+    font-weight: 650;
+    color: var(--burgundy);
+    letter-spacing: 1px;
+  }
+  .home-service-top > svg {
+    color: var(--blue);
+    transition: transform 0.2s;
+  }
+  .home-service:hover .home-service-top > svg {
+    transform: translate(3px, -3px);
+  }
+  .home-service h3 {
+    font-size: 21px;
+    line-height: 1.28;
+    letter-spacing: -0.6px;
+    font-weight: 600;
+    max-width: 315px;
+    margin-top: 19px;
+  }
+  .home-service > p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.85;
+    margin: 17px 0 25px;
+    max-width: 340px;
+    flex: 1;
+  }
+  .home-service-image {
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+  .home-service-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+  .home-service:hover img {
+    transform: scale(1.03);
+  }
+  .home-service-image > span {
+    position: absolute;
+    bottom: 13px;
+    left: 13px;
+    padding: 7px 10px;
+    background: #fff;
+    color: var(--navy);
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+  .services-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 37px;
+  }
+  .services-bottom > span {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .home-coverage {
+    background: var(--navy);
+    color: #fff;
+  }
+  .home-coverage .split-grid {
+    grid-template-columns: 1fr 1.06fr;
+    gap: 100px;
+  }
+  .coverage-copy .eyebrow {
+    color: #aebfe6;
+  }
+  .coverage-copy h2 {
+    margin-top: 22px;
+    font-size: 49px;
+    font-weight: 500;
+  }
+  .coverage-copy > p:not(.eyebrow) {
+    font-size: 14px;
+    color: #c0cbdc;
+    margin-top: 24px;
+    max-width: 440px;
+    line-height: 1.9;
+  }
+  .coverage-regions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 8px;
+    letter-spacing: 1.4px;
+    border-block: 1px solid #ffffff22;
+    padding: 20px 0;
+    margin: 27px 0;
+  }
+  .coverage-regions > span + span::before {
+    content: '/';
+    color: #8f9fb7;
+    padding-right: 18px;
+  }
+  .coverage-copy .coverage-small {
+    font-size: 10px !important;
+    color: #b7c2d4 !important;
+    line-height: 1.7 !important;
+    margin-top: 18px !important;
+  }
+  .home-map {
+    background: #edf1f5;
+    border-radius: 5px;
+    padding: 24px 25px 22px;
+    color: var(--navy);
+    position: relative;
+  }
+  .home-map > div {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    color: #526177;
+  }
+  .home-map > img {
+    height: 380px;
+    width: 100%;
+    object-fit: contain;
+  }
+  .map-footnote {
+    display: block;
+    font-size: 9px;
+    text-align: center;
+    color: #536176;
+    margin-top: 8px;
+  }
+  @media (min-width: 1600px) {
+    .home-hero {
+      min-height: 705px;
+    }
+    .hero-inner {
+      padding-top: 70px;
+      padding-bottom: 110px;
+    }
+    .home-hero h1 {
+      font-size: 112px;
+    }
+    .hero-bottom {
+      margin-top: 32px;
+    }
+  }
+  @media (max-width: 1150px) {
+    .hero-coordinate {
+      font-size: 7px;
+    }
+    .home-hero {
+      min-height: 610px;
+    }
+    .home-hero h1 {
+      font-size: 84px;
+    }
+    .hero-marker {
+      display: none;
+    }
+    .home-service-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px 24px;
+    }
+    .home-service h3 {
+      font-size: 23px;
+    }
+    .home-service-image {
+      height: 200px;
+    }
+    .home-coverage .split-grid {
+      gap: 55px;
+    }
+    .coverage-copy h2 {
+      font-size: 41px;
+    }
+    .home-map > img {
+      height: 350px;
+    }
+  }
+  @media (max-width: 980px) {
+    .home-hero {
+      margin: 12px 12px 0;
+      min-height: 590px;
+    }
+    .hero-inner {
+      padding-top: 48px;
+      padding-bottom: 87px;
+    }
+    .home-hero h1 {
+      font-size: 77px;
+    }
+    .hero-coordinate {
+      display: none;
+    }
+    .home-service-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px 20px;
+    }
+    .home-service h3 {
+      font-size: 20px;
+    }
+    .home-service > p {
+      font-size: 11px;
+    }
+    .home-service-image {
+      height: 165px;
+    }
+    .home-coverage .split-grid {
+      gap: 32px;
+    }
+    .coverage-copy h2 {
+      font-size: 36px;
+    }
+    .coverage-copy > p:not(.eyebrow) {
+      font-size: 13px;
+    }
+    .home-map {
+      padding: 20px 15px;
+    }
+    .home-map > img {
+      height: 335px;
+    }
+    .home-map > div {
+      font-size: 6px;
+      letter-spacing: 1.1px;
+    }
+    .coverage-regions {
+      gap: 10px;
+      letter-spacing: 0.7px;
+      font-size: 7px;
+    }
+    .coverage-regions > span + span::before {
+      padding-right: 10px;
+    }
+    .services-bottom > span {
+      font-size: 10px;
+    }
+    .services-bottom .text-link {
+      font-size: 11px;
+    }
+  }
+  @media (max-width: 700px) {
+    .home-hero h1 {
+      font-size: 66px;
+      letter-spacing: -3px;
+    }
+    .home-hero {
+      min-height: 620px;
+    }
+    .hero-bottom > div > p {
+      max-width: 390px;
+    }
+    .hero-actions {
+      gap: 23px;
+    }
+    .home-service-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 33px;
+    }
+    .home-service h3 {
+      font-size: 24px;
+      max-width: 390px;
+    }
+    .home-service > p {
+      font-size: 13px;
+      max-width: none;
+      margin-top: 16px;
+    }
+    .home-service-image {
+      height: 260px;
+    }
+    .home-coverage .split-grid {
+      grid-template-columns: 1fr;
+      gap: 35px;
+    }
+    .coverage-copy h2 {
+      font-size: 40px;
+    }
+    .coverage-copy > p:not(.eyebrow) {
+      max-width: 550px;
+      font-size: 14px;
+    }
+    .coverage-regions {
+      font-size: 8px;
+      gap: 20px;
+      letter-spacing: 1px;
+    }
+    .coverage-regions > span + span::before {
+      padding-right: 20px;
+    }
+    .home-map > img {
+      height: 390px;
+    }
+    .home-map > div {
+      font-size: 8px;
+    }
+    .services-bottom {
+      align-items: flex-start;
+    }
+    .services-bottom > span {
+      max-width: 200px;
+      line-height: 1.8;
+    }
+    .services-bottom .text-link {
+      white-space: nowrap;
+    }
+    .home-services {
+      padding-top: 65px;
+    }
+  }
+  @media (max-width: 480px) {
+    .home-hero {
+      margin: 9px 9px 0;
+      min-height: 753px;
+      border-radius: 4px;
+    }
+    .hero-inner {
+      width: calc(100% - 38px);
+      padding-top: 38px;
+      padding-bottom: 50px;
+    }
+    .hero-topline .eyebrow {
+      font-size: 7px;
+      letter-spacing: 1.3px;
+      gap: 8px;
+    }
+    .home-hero h1 {
+      font-size: 54px;
+      letter-spacing: -2.6px;
+      margin-top: 27px;
+      line-height: 1.12;
+    }
+    .home-hero h1 > span {
+      font-size: 51px;
+    }
+    .hero-bottom {
+      margin-top: 25px;
+    }
+    .hero-bottom > div > p {
+      font-size: 12px;
+      max-width: 305px;
+      line-height: 1.9;
+    }
+    .hero-actions {
+      gap: 21px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+    .hero-actions .button {
+      font-size: 11px;
+      min-height: 48px;
+      padding: 14px 18px;
+      gap: 20px;
+    }
+    .hero-text-link {
+      font-size: 10px;
+      gap: 10px;
+    }
+    .home-hero::after {
+      background: linear-gradient(
+        180deg,
+        #101e31e8 0%,
+        #101e31ad 42%,
+        #101e3130 78%
+      );
+    }
+    .home-route {
+      margin-top: -25px;
+    }
+    .home-services {
+      padding-top: 61px;
+    }
+    .home-service h3 {
+      font-size: 25px;
+      max-width: 290px;
+    }
+    .home-service-image {
+      height: 215px;
+    }
+    .services-bottom {
+      display: block;
+      margin-top: 26px;
+    }
+    .services-bottom > span {
+      display: block;
+      max-width: none;
+    }
+    .services-bottom .text-link {
+      margin-top: 18px;
+    }
+    .home-map > img {
+      height: auto;
+      max-height: 370px;
+    }
+    .coverage-copy h2 {
+      font-size: 36px;
+    }
+    .home-map {
+      padding: 20px;
+    }
+    .home-map > div {
+      font-size: 7px;
+    }
+    .map-footnote {
+      font-size: 8px;
+    }
+  }
+  @media (max-width: 360px) {
+    .home-hero h1 {
+      font-size: 46px;
+    }
+    .home-hero h1 > span {
+      font-size: 44px;
+    }
+    .hero-topline .eyebrow {
+      font-size: 6px;
+    }
+    .home-hero {
+      min-height: 755px;
+    }
+    .hero-text-link {
+      font-size: 10px;
+    }
+    .hero-actions {
+      gap: 18px;
+    }
+  }
+</style>

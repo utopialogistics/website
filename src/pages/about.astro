@@ -1,0 +1,220 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title="About Our Canadian Trucking Company"
+  description="Meet Utopia Logistics Inc., a trucking company based in Milton, Ontario with a North American outlook. Connect with our dispatch team."
+>
+  <PageHero
+    eyebrow="About Utopia"
+    title={'Canadian roots.\nOpen-road possibilities.'}
+    description="A Canadian trucking company with a North American outlook. We’re Utopia Logistics Inc., based in Milton, Ontario."
+    image="/images/trucking-detail.webp"
+    alt="White tractor-trailer on a forest-lined road in British Columbia"
+  />
+  <section class="section">
+    <div class="container about-statement">
+      <div>
+        <p class="eyebrow">The company behind the journey</p>
+        <span class="statement-mark" aria-hidden="true">
+          U /
+        </span>
+      </div>
+      <div>
+        <h2 class="section-title">
+          Every shipment starts
+          <br />
+          with understanding
+          <br />
+          <em>what comes next.</em>
+        </h2>
+        <p>{site.about.description}</p>
+        <p>
+          Have a destination in mind? Our dispatch team is your starting point
+          for a conversation about Canadian freight, cross-border
+          transportation, or a longer North American trip.
+        </p>
+        <a href="/contact/" class="text-link">
+          Talk to our team <Icon size={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+  <section class="section light-section">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">A practical starting point</p>
+          <h2 class="section-title">
+            The details that
+            <br />
+            shape every journey.
+          </h2>
+        </div>
+        <p>
+          A useful shipment conversation comes down to three things. They help
+          us understand your enquiry before discussing the next step.
+        </p>
+      </div>
+      <div class="process-grid">
+        <article class="process-step">
+          <span>01 / THE ROUTE</span>
+          <Icon name="route" size={26} />
+          <h3>Where it needs to go.</h3>
+          <p>
+            From pickup to delivery, clear location details give the
+            conversation a direction.
+          </p>
+        </article>
+        <article class="process-step">
+          <span>02 / THE LOAD</span>
+          <Icon name="box" size={26} />
+          <h3>What you need to move.</h3>
+          <p>
+            The freight description, quantity, dimensions, and weight help us
+            understand the shipment.
+          </p>
+        </article>
+        <article class="process-step">
+          <span>03 / THE REQUIREMENTS</span>
+          <Icon name="check" size={26} />
+          <h3>What the trip calls for.</h3>
+          <p>
+            Preferred dates and loading or delivery requirements put the rest of
+            the journey in context.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container split-grid">
+      <div class="photo-frame">
+        <img
+          src="/images/freight-road.webp"
+          alt="Red semi-truck and silver trailer travelling through an open desert landscape"
+          width="1200"
+          height="737"
+          loading="lazy"
+        />
+      </div>
+      <div class="split-copy">
+        <p class="eyebrow">At home in Canada</p>
+        <h2 class="section-title">
+          From Milton.
+          <br />
+          Looking ahead.
+        </h2>
+        <p class="body-copy">
+          Our company is based at {site.address}. From here, the conversation
+          can take us to destinations across North America.
+        </p>
+        <p class="body-copy">
+          For your next shipment, send dispatch the route and freight details
+          you have. We’ll discuss the trip and confirm the arrangements with
+          you.
+        </p>
+        <div class="about-contact">
+          <a href={site.phoneHref}>
+            <Icon name="phone" size={18} />
+            {site.phone}
+          </a>
+          <a href={`mailto:${site.email}`}>
+            <Icon name="mail" size={18} />
+            {site.email}
+          </a>
+        </div>
+        <a href="/coverage/" class="text-link">
+          Explore our coverage <Icon size={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+  <CtaBand title="Let’s move forward, together." />
+</Layout>
+<style>
+  .about-statement {
+    display: grid;
+    grid-template-columns: 0.8fr 1.4fr;
+    gap: 85px;
+  }
+  .statement-mark {
+    font-family: 'Manrope Variable', sans-serif;
+    font-size: 160px;
+    line-height: 1.4;
+    font-weight: 400;
+    letter-spacing: -10px;
+    color: #8190a5;
+    display: block;
+    margin-top: 25px;
+  }
+  .about-statement .section-title {
+    font-size: 52px;
+  }
+  .about-statement > div > p:not(.eyebrow) {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.9;
+    max-width: 650px;
+    margin-top: 27px;
+  }
+  .about-statement .text-link {
+    margin-top: 30px;
+  }
+  .about-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 27px;
+  }
+  .about-contact a {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    color: var(--blue);
+  }
+  @media (max-width: 980px) {
+    .about-statement {
+      gap: 40px;
+      grid-template-columns: 0.75fr 1.3fr;
+    }
+    .about-statement .section-title {
+      font-size: 43px;
+    }
+    .statement-mark {
+      font-size: 130px;
+    }
+    .about-statement > div > p:not(.eyebrow) {
+      font-size: 14px;
+    }
+  }
+  @media (max-width: 700px) {
+    .about-statement {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+    .statement-mark {
+      display: none;
+    }
+    .about-statement .section-title {
+      font-size: 39px;
+    }
+  }
+  @media (max-width: 480px) {
+    .about-statement .section-title {
+      font-size: 33px;
+    }
+    .about-contact a {
+      font-size: 12px;
+    }
+    .about-statement > div > p:not(.eyebrow) {
+      font-size: 13px;
+    }
+  }
+</style>

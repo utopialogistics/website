@@ -1,0 +1,80 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Layout
+  title="Page Not Found"
+  description="This page could not be found. Return to Utopia Logistics or contact dispatch to discuss your shipment."
+  noindex
+>
+  <section class="section not-found">
+    <div class="container">
+      <span class="error-code">404 / A DETOUR</span>
+      <h1>
+        This road
+        <br />
+        ends here.
+      </h1>
+      <p>
+        The page you’re looking for may have moved.
+        <br />
+        Let’s get you heading in the right direction.
+      </p>
+      <div>
+        <a href="/" class="button button-primary">
+          Back to Home <Icon size={18} />
+        </a>
+        <a href="/contact/" class="text-link">
+          Contact dispatch <Icon size={18} />
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>
+<style>
+  .not-found {
+    background: var(--light);
+    padding-block: 90px 110px;
+  }
+  .error-code {
+    font-size: 11px;
+    color: var(--burgundy);
+    letter-spacing: 2px;
+    font-weight: 650;
+  }
+  .not-found h1 {
+    font-size: 90px;
+    font-weight: 550;
+    line-height: 1.1;
+    letter-spacing: -4px;
+    margin-top: 28px;
+  }
+  .not-found p {
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 25px;
+  }
+  .not-found .container > div {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-top: 30px;
+  }
+  @media (max-width: 600px) {
+    .not-found h1 {
+      font-size: 64px;
+      letter-spacing: -2.5px;
+    }
+    .not-found p {
+      font-size: 13px;
+    }
+    .not-found .container > div {
+      flex-wrap: wrap;
+      gap: 25px;
+    }
+    .not-found {
+      padding-block: 70px;
+    }
+  }
+</style>

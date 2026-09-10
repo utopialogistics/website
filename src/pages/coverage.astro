@@ -1,0 +1,275 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import RoutePlanner from '../components/RoutePlanner.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title="Canada & North American Trucking Coverage"
+  description="Based in Milton, Ontario, Utopia Logistics handles North American trucking enquiries. Explore broad coverage and discuss availability for your route."
+>
+  <PageHero
+    eyebrow="Our coverage"
+    title={'Based in Canada.\nMoving across North America.'}
+    description="An open road begins with two locations. Share your pickup and delivery destinations, and let’s discuss the route between them."
+  />
+  <section class="section coverage-main">
+    <div class="container coverage-layout">
+      <div class="coverage-map">
+        <div class="map-heading">
+          <span class="green-dot"></span>NORTH AMERICA / THE BIG PICTURE
+        </div>
+        <img
+          src="/images/north-america.svg"
+          alt="Geographic map of Canada, the United States, and Mexico, with neighbouring land in subdued colours"
+          width="840"
+          height="720"
+          loading="lazy"
+        />
+        <p>
+          Regional illustration. Specific lanes are subject to confirmation.
+        </p>
+      </div>
+      <div class="coverage-region-list">
+        <p class="eyebrow">Where your freight needs to go</p>
+        <article>
+          <span>01 / DOMESTIC</span>
+          <h2>Canadian destinations.</h2>
+          <p>
+            Moving between Canadian locations? Send your origin, destination,
+            and preferred dates to discuss the trip.
+          </p>
+          <a href="/services/#long-haul" class="text-link">
+            Canadian &amp; long-haul transportation <Icon size={17} />
+          </a>
+        </article>
+        <article>
+          <span>02 / CROSS-BORDER</span>
+          <h2>Across the border.</h2>
+          <p>
+            For shipments between Canada and destinations across the border,
+            start with the cities and countries at each end.
+          </p>
+          <a href="/services/cross-border/" class="text-link">
+            Cross-border transportation <Icon size={17} />
+          </a>
+        </article>
+        <article>
+          <span>03 / SHIPMENT SIZE</span>
+          <h2>A full trailer, or part of one.</h2>
+          <p>
+            The route is only half the picture. Compare full truckload and LTL
+            to see which suits the freight you are moving.
+          </p>
+          <a href="/services/#ftl-or-ltl" class="text-link">
+            Compare FTL and LTL <Icon size={17} />
+          </a>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section class="section light-section" id="plan-your-route">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Your route starts here</p>
+          <h2 class="section-title">
+            Point A. Point B.
+            <br />
+            Let’s talk about the journey.
+          </h2>
+        </div>
+        <p>
+          The map shows our broad geographic outlook. Dispatch confirms the
+          availability and arrangements for your specific shipment.
+        </p>
+      </div>
+      <RoutePlanner />
+    </div>
+  </section>
+  <section class="section">
+    <div class="container split-grid">
+      <div class="split-copy">
+        <p class="eyebrow">Our Canadian base</p>
+        <h2 class="section-title">
+          Milton, Ontario.
+          <br />
+          Our starting point.
+        </h2>
+        <p class="body-copy">
+          Utopia Logistics Inc. is based in Canada. You can reach our dispatch
+          team by phone or email to discuss pickup locations, delivery
+          destinations, and freight requirements.
+        </p>
+        <a href="/contact/" class="text-link">
+          Get in touch <Icon size={18} />
+        </a>
+      </div>
+      <div class="base-panel">
+        <Icon name="pin" size={33} />
+        <span>UTOPIA LOGISTICS INC.</span>
+        <h3>
+          {site.street}
+          <br />
+          {site.locality}
+        </h3>
+        <p>Canada</p>
+        <a
+          href={site.mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-link"
+        >
+          View address on Google Maps <Icon name="diagonal" size={18} />
+          <span class="sr-only"> (opens a new tab)</span>
+        </a>
+      </div>
+    </div>
+  </section>
+  <CtaBand title="Where does your freight go next?" />
+</Layout>
+<style>
+  .coverage-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .coverage-map {
+    background: var(--light);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 30px;
+    position: sticky;
+    top: 122px;
+  }
+  .map-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 8px;
+    letter-spacing: 1.6px;
+    color: #536277;
+  }
+  .coverage-map img {
+    width: 100%;
+    height: auto;
+  }
+  .coverage-map > p {
+    font-size: 9px;
+    color: #586779;
+    text-align: center;
+  }
+  .coverage-region-list article {
+    border-bottom: 1px solid var(--line);
+    padding: 30px 0;
+  }
+  .coverage-region-list article:last-child {
+    padding-bottom: 0;
+    border: 0;
+  }
+  .coverage-region-list article > span {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    color: var(--burgundy);
+    font-weight: 600;
+  }
+  .coverage-region-list h2 {
+    font-size: 29px;
+    letter-spacing: -0.8px;
+    font-weight: 550;
+    margin-top: 12px;
+  }
+  .coverage-region-list article > p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 14px;
+    line-height: 1.9;
+  }
+  .coverage-region-list .text-link {
+    margin-top: 20px;
+    font-size: 11px;
+  }
+  .base-panel {
+    padding: 40px;
+    background: var(--light);
+    border-left: 3px solid var(--blue);
+  }
+  .base-panel > svg {
+    color: var(--blue);
+    margin-bottom: 30px;
+  }
+  .base-panel > span {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+  }
+  .base-panel h3 {
+    font-size: 28px;
+    letter-spacing: -0.8px;
+    line-height: 1.5;
+    font-weight: 550;
+    margin-top: 15px;
+  }
+  .base-panel > p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+  .base-panel > .text-link {
+    margin-top: 25px;
+    font-size: 11px;
+  }
+  @media (max-width: 980px) {
+    .coverage-layout {
+      gap: 40px;
+    }
+    .coverage-map {
+      padding: 25px 20px;
+    }
+    .coverage-region-list h2 {
+      font-size: 26px;
+    }
+    .base-panel {
+      padding: 30px;
+    }
+    .base-panel h3 {
+      font-size: 24px;
+    }
+  }
+  @media (max-width: 700px) {
+    .coverage-layout {
+      grid-template-columns: 1fr;
+      gap: 35px;
+    }
+    .coverage-map {
+      position: static;
+    }
+    .coverage-map img {
+      max-height: 460px;
+    }
+    .coverage-region-list article {
+      padding-block: 26px;
+    }
+  }
+  @media (max-width: 480px) {
+    .map-heading {
+      font-size: 7px;
+      letter-spacing: 1px;
+    }
+    .coverage-map > p {
+      font-size: 8px;
+    }
+    .base-panel h3 {
+      font-size: 22px;
+    }
+    .base-panel > .text-link {
+      font-size: 10px;
+      gap: 12px;
+    }
+  }
+</style>

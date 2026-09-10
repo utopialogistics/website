@@ -1,0 +1,20 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  items: { question: string; answer: string }[];
+}
+const { items } = Astro.props;
+---
+
+<div class="faq-list">
+  {items.map((item, index) => (
+    <details>
+      <summary>
+        <span class="faq-number">{String(index + 1).padStart(2, '0')}</span>
+        <span>{item.question}</span>
+        <Icon name="plus" size={20} />
+      </summary>
+      <p>{item.answer}</p>
+    </details>
+  ))}
+</div>

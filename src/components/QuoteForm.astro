@@ -1,0 +1,1591 @@
+---
+interface Props {
+  /** An HTTPS URL or same-origin absolute path that accepts a URL-encoded POST. */
+  endpoint?: string;
+  email?: string;
+  id?: string;
+}
+
+const { endpoint = '', email = '', id = 'quote-request' } = Astro.props;
+const destination = endpoint.trim();
+if (
+  destination &&
+  !/^https:\/\/[^\s]+$/.test(destination) &&
+  !/^\/(?!\/)[^\s]*$/.test(destination)
+) {
+  throw new Error(
+    'QuoteForm endpoint must be an HTTPS URL or a same-origin path beginning with /.',
+  );
+}
+const fieldId = (name: string) => `${id}-${name}`;
+
+const shipmentTypes = [
+  {
+    value: 'ftl',
+    title: 'Full truckload (FTL)',
+    hint: 'A truck’s capacity reserved for your shipment.',
+  },
+  {
+    value: 'ltl',
+    title: 'Less than truckload (LTL)',
+    hint: 'Part of a trailer shared with other freight.',
+  },
+  {
+    value: 'not-sure',
+    title: 'Not sure yet',
+    hint: 'Share the details and we’ll discuss the options.',
+  },
+];
+
+const locationRequirements = [
+  {
+    name: 'pickup_dock',
+    label: 'Commercial dock at pickup',
+  },
+  {
+    name: 'pickup_forklift',
+    label: 'Forklift available at pickup',
+  },
+  {
+    name: 'delivery_dock',
+    label: 'Commercial dock at delivery',
+  },
+  {
+    name: 'delivery_forklift',
+    label: 'Forklift available at delivery',
+  },
+  {
+    name: 'liftgate',
+    label: 'Liftgate requested',
+  },
+  {
+    name: 'appointment',
+    label: 'Delivery appointment required',
+  },
+];
+---
+
+<div class="quote-form" data-quote-form data-email={email}>
+  <div class="form-intro">
+    <h3>Tell us about your shipment.</h3>
+    <p>
+      Fields marked <span aria-label="with an asterisk">*</span> are required.
+      Everything else helps, but an estimate is fine.
+    </p>
+  </div>
+  <form
+    action={destination || undefined}
+    method="post"
+    novalidate
+    data-endpoint={destination}
+    aria-label="Freight quote request"
+  >
+    <fieldset class="form-content" disabled data-form-content>
+      <legend class="sr-only">Freight quote request</legend>
+      <div
+        class="error-summary"
+        role="alert"
+        tabindex="-1"
+        hidden
+        data-error-summary
+      >
+        <p>Please check the following details:</p>
+        <ul data-error-list></ul>
+      </div>
+
+      <fieldset class="field-group">
+        <legend>
+          <span>01</span> Shipment type
+        </legend>
+        <p class="group-note">
+          How much of a trailer does your freight need? This is separate from
+          your route and from any equipment request.
+        </p>
+        <div class="choice-grid" role="radiogroup" aria-label="Shipment type">
+          {shipmentTypes.map((option) => (
+            <label class="choice">
+              <input
+                type="radio"
+                name="shipment_type"
+                value={option.value}
+                checked={option.value === 'not-sure'}
+              />
+              <span>
+                <strong>{option.title}</strong>
+                <em>{option.hint}</em>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend>
+          <span>02</span> Origin and destination
+        </legend>
+        <div class="field-grid">
+          <div class="field full-width">
+            <label for={fieldId('route_type')}>Route</label>
+            <select id={fieldId('route_type')} name="route_type">
+              <option value="not-sure">Not sure yet</option>
+              <option value="domestic">Within Canada</option>
+              <option value="cross-border">
+                Between Canada and the United States
+              </option>
+              <option value="other">Another North American route</option>
+            </select>
+          </div>
+        </div>
+        <div class="location-columns">
+          <div class="location-block">
+            <h4 class="location-heading">
+              <span class="route-marker" aria-hidden="true"></span> Pickup
+            </h4>
+            <div class="field-grid">
+              <div class="field full-width">
+                <label for={fieldId('pickup_city')}>
+                  City <span>*</span>
+                </label>
+                <input
+                  id={fieldId('pickup_city')}
+                  name="pickup_city"
+                  autocomplete="section-pickup address-level2"
+                  placeholder="Where from?"
+                  required
+                  maxlength="160"
+                  aria-describedby={fieldId('pickup_city-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('pickup_city-error')}
+                  hidden
+                ></p>
+              </div>
+              <div class="field">
+                <label for={fieldId('pickup_region')}>
+                  Province / state <span class="optional">(optional)</span>
+                </label>
+                <input
+                  id={fieldId('pickup_region')}
+                  name="pickup_region"
+                  autocomplete="section-pickup address-level1"
+                  placeholder="e.g. ON"
+                  maxlength="80"
+                  aria-describedby={fieldId('pickup_region-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('pickup_region-error')}
+                  hidden
+                ></p>
+              </div>
+              <div class="field">
+                <label for={fieldId('pickup_postal')}>
+                  Postal / ZIP <span class="optional">(optional)</span>
+                </label>
+                <input
+                  id={fieldId('pickup_postal')}
+                  name="pickup_postal"
+                  autocomplete="section-pickup postal-code"
+                  placeholder="e.g. L9T 6R1"
+                  maxlength="20"
+                  aria-describedby={fieldId('pickup_postal-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('pickup_postal-error')}
+                  hidden
+                ></p>
+              </div>
+              <div class="field full-width">
+                <label for={fieldId('pickup_country')}>
+                  Country <span>*</span>
+                </label>
+                <input
+                  id={fieldId('pickup_country')}
+                  name="pickup_country"
+                  autocomplete="section-pickup country-name"
+                  placeholder="e.g. Canada"
+                  list={fieldId('countries')}
+                  required
+                  maxlength="100"
+                  aria-describedby={fieldId('pickup_country-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('pickup_country-error')}
+                  hidden
+                ></p>
+              </div>
+            </div>
+          </div>
+          <div class="location-block">
+            <h4 class="location-heading">
+              <span class="route-marker destination" aria-hidden="true"></span>{' '}
+              Delivery
+            </h4>
+            <div class="field-grid">
+              <div class="field full-width">
+                <label for={fieldId('delivery_city')}>
+                  City <span>*</span>
+                </label>
+                <input
+                  id={fieldId('delivery_city')}
+                  name="delivery_city"
+                  autocomplete="section-delivery address-level2"
+                  placeholder="Where to?"
+                  required
+                  maxlength="160"
+                  aria-describedby={fieldId('delivery_city-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('delivery_city-error')}
+                  hidden
+                ></p>
+              </div>
+              <div class="field">
+                <label for={fieldId('delivery_region')}>
+                  Province / state <span class="optional">(optional)</span>
+                </label>
+                <input
+                  id={fieldId('delivery_region')}
+                  name="delivery_region"
+                  autocomplete="section-delivery address-level1"
+                  placeholder="e.g. IL"
+                  maxlength="80"
+                  aria-describedby={fieldId('delivery_region-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('delivery_region-error')}
+                  hidden
+                ></p>
+              </div>
+              <div class="field">
+                <label for={fieldId('delivery_postal')}>
+                  Postal / ZIP <span class="optional">(optional)</span>
+                </label>
+                <input
+                  id={fieldId('delivery_postal')}
+                  name="delivery_postal"
+                  autocomplete="section-delivery postal-code"
+                  placeholder="e.g. 60601"
+                  maxlength="20"
+                  aria-describedby={fieldId('delivery_postal-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('delivery_postal-error')}
+                  hidden
+                ></p>
+              </div>
+              <div class="field full-width">
+                <label for={fieldId('delivery_country')}>
+                  Country <span>*</span>
+                </label>
+                <input
+                  id={fieldId('delivery_country')}
+                  name="delivery_country"
+                  autocomplete="section-delivery country-name"
+                  placeholder="e.g. United States"
+                  list={fieldId('countries')}
+                  required
+                  maxlength="100"
+                  aria-describedby={fieldId('delivery_country-error')}
+                />
+                <p
+                  class="field-error"
+                  id={fieldId('delivery_country-error')}
+                  hidden
+                ></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend>
+          <span>03</span> Freight details
+        </legend>
+        <div class="field-grid">
+          <div class="field full-width">
+            <label for={fieldId('commodity')}>
+              Commodity <span>*</span>
+            </label>
+            <textarea
+              id={fieldId('commodity')}
+              name="commodity"
+              rows="2"
+              required
+              maxlength="2500"
+              placeholder="What are you shipping? For example, palletised packaged goods."
+              aria-describedby={fieldId('commodity-error')}
+            ></textarea>
+            <p class="field-error" id={fieldId('commodity-error')} hidden></p>
+          </div>
+          <div class="field">
+            <label for={fieldId('piece_count')}>
+              Pallet / package count <span class="optional">(optional)</span>
+            </label>
+            <input
+              id={fieldId('piece_count')}
+              type="number"
+              name="piece_count"
+              min="1"
+              step="1"
+              inputmode="numeric"
+              placeholder="e.g. 4"
+              aria-describedby={fieldId('piece_count-error')}
+            />
+            <p class="field-error" id={fieldId('piece_count-error')} hidden></p>
+          </div>
+          <div class="field">
+            <label for={fieldId('stackable')}>Stackable</label>
+            <select id={fieldId('stackable')} name="stackable">
+              <option value="not-sure">Not sure</option>
+              <option value="yes">Yes, freight can be stacked</option>
+              <option value="no">No, do not stack</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for={fieldId('dimensions')}>
+              Dimensions <span class="optional">(optional)</span>
+            </label>
+            <div class="unit-field">
+              <input
+                id={fieldId('dimensions')}
+                name="dimensions"
+                placeholder="L × W × H per piece"
+                maxlength="200"
+                aria-describedby={fieldId('dimensions-error')}
+              />
+              <label class="sr-only" for={fieldId('dimension_unit')}>
+                Dimension unit
+              </label>
+              <select id={fieldId('dimension_unit')} name="dimension_unit">
+                <option value="in">in</option>
+                <option value="cm">cm</option>
+              </select>
+            </div>
+            <p class="field-error" id={fieldId('dimensions-error')} hidden></p>
+          </div>
+          <div class="field">
+            <label for={fieldId('weight')}>
+              Total weight <span class="optional">(optional)</span>
+            </label>
+            <div class="unit-field">
+              <input
+                id={fieldId('weight')}
+                type="number"
+                name="weight"
+                min="0.001"
+                step="any"
+                inputmode="decimal"
+                placeholder="Weight"
+                aria-describedby={fieldId('weight-error')}
+              />
+              <label class="sr-only" for={fieldId('weight_unit')}>
+                Weight unit
+              </label>
+              <select id={fieldId('weight_unit')} name="weight_unit">
+                <option value="lb">lb</option>
+                <option value="kg">kg</option>
+              </select>
+            </div>
+            <p class="field-error" id={fieldId('weight-error')} hidden></p>
+          </div>
+          <div class="field full-width">
+            <label for={fieldId('equipment')}>
+              Equipment or handling requests{' '}
+              <span class="optional">(optional)</span>
+            </label>
+            <input
+              id={fieldId('equipment')}
+              name="equipment"
+              maxlength="300"
+              placeholder="Tell us what the freight needs."
+              aria-describedby={`${fieldId('equipment-hint')} ${fieldId('equipment-error')}`}
+            />
+            <p class="field-hint" id={fieldId('equipment-hint')}>
+              Requests are assessed for each shipment. Equipment availability is
+              confirmed with dispatch and is not guaranteed by this form.
+            </p>
+            <p class="field-error" id={fieldId('equipment-error')} hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend>
+          <span>04</span> Timing
+        </legend>
+        <div class="field-grid">
+          <div class="field">
+            <label for={fieldId('pickup_date')}>
+              Preferred pickup date <span>*</span>
+            </label>
+            <input
+              id={fieldId('pickup_date')}
+              type="date"
+              name="pickup_date"
+              required
+              aria-describedby={fieldId('pickup_date-error')}
+            />
+            <p class="field-error" id={fieldId('pickup_date-error')} hidden></p>
+          </div>
+          <div class="field">
+            <label for={fieldId('delivery_date')}>
+              Requested delivery date <span class="optional">(optional)</span>
+            </label>
+            <input
+              id={fieldId('delivery_date')}
+              type="date"
+              name="delivery_date"
+              aria-describedby={`${fieldId('delivery_date-hint')} ${fieldId('delivery_date-error')}`}
+            />
+            <p class="field-hint" id={fieldId('delivery_date-hint')}>
+              A requested date, not a confirmed delivery commitment.
+            </p>
+            <p
+              class="field-error"
+              id={fieldId('delivery_date-error')}
+              hidden
+            ></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend>
+          <span>05</span> Location requirements
+        </legend>
+        <p class="group-note">
+          Tick anything that applies at either end. These are requests for us to
+          assess, not services confirmed by this form.
+        </p>
+        <div class="checkbox-grid">
+          {locationRequirements.map((requirement) => (
+            <label class="check">
+              <input type="checkbox" name={requirement.name} value="yes" />
+              <span>{requirement.label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend>
+          <span>06</span> Your details
+        </legend>
+        <div class="field-grid">
+          <div class="field">
+            <label for={fieldId('name')}>
+              Full name <span>*</span>
+            </label>
+            <input
+              id={fieldId('name')}
+              name="name"
+              autocomplete="name"
+              placeholder="Your full name"
+              required
+              maxlength="120"
+              aria-describedby={fieldId('name-error')}
+            />
+            <p class="field-error" id={fieldId('name-error')} hidden></p>
+          </div>
+          <div class="field">
+            <label for={fieldId('company')}>
+              Company <span>*</span>
+            </label>
+            <input
+              id={fieldId('company')}
+              name="company"
+              autocomplete="organization"
+              placeholder="Company name"
+              required
+              maxlength="160"
+              aria-describedby={fieldId('company-error')}
+            />
+            <p class="field-error" id={fieldId('company-error')} hidden></p>
+          </div>
+          <div class="field">
+            <label for={fieldId('email')}>
+              Email address <span>*</span>
+            </label>
+            <input
+              id={fieldId('email')}
+              type="email"
+              name="email"
+              autocomplete="email"
+              placeholder="you@company.com"
+              required
+              maxlength="254"
+              aria-describedby={fieldId('email-error')}
+            />
+            <p class="field-error" id={fieldId('email-error')} hidden></p>
+          </div>
+          <div class="field">
+            <label for={fieldId('phone')}>
+              Phone <span class="optional">(optional)</span>
+            </label>
+            <input
+              id={fieldId('phone')}
+              type="tel"
+              name="phone"
+              autocomplete="tel"
+              placeholder="Your phone number"
+              maxlength="40"
+              aria-describedby={fieldId('phone-error')}
+            />
+            <p class="field-error" id={fieldId('phone-error')} hidden></p>
+          </div>
+          <div class="field full-width">
+            <label for={fieldId('details')}>
+              Additional notes <span class="optional">(optional)</span>
+            </label>
+            <textarea
+              id={fieldId('details')}
+              name="details"
+              rows="2"
+              maxlength="4000"
+              placeholder="Delivery requirements or anything else we should know."
+              aria-describedby={fieldId('details-error')}
+            ></textarea>
+            <p class="field-error" id={fieldId('details-error')} hidden></p>
+          </div>
+        </div>
+      </fieldset>
+
+      <datalist id={fieldId('countries')}>
+        <option value="Canada" />
+        <option value="United States" />
+        <option value="Mexico" />
+      </datalist>
+      <div class="form-bottom">
+        <p class="mode-note" id={fieldId('mode')}>
+          {destination
+            ? 'Route availability and shipment details are subject to confirmation.'
+            : email
+              ? 'Review your request, then send it from your email app. This form does not send automatically.'
+              : 'Preview mode — requests are not sent.'}
+        </p>
+        <button
+          class="submit-button"
+          type="submit"
+          aria-describedby={fieldId('mode')}
+        >
+          {destination ? 'Request a Quote' : 'Review Quote Request'}
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M4 12h15m-6-6 6 6-6 6"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </fieldset>
+    <noscript>
+      <p class="no-script">
+        Please enable JavaScript to complete and review your quote request. No
+        request has been sent.
+      </p>
+    </noscript>
+  </form>
+
+  <section
+    class="review-panel"
+    hidden
+    data-review
+    aria-label="Quote request review"
+  >
+    <div class="review-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+        <path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.5" />
+        <path
+          d="M14 3v5h4M10 12h5m-5 4h5"
+          stroke="currentColor"
+          stroke-width="1.5"
+        />
+      </svg>
+    </div>
+    <h4 tabindex="-1" data-review-heading>
+      Review your quote request
+    </h4>
+    <p class="review-notice">
+      This request has <strong>not been sent</strong>.{' '}
+      {email
+        ? `Check your details, then open an email draft to ${email}. Review and send it from your email app.`
+        : 'Review your details and download a copy for your records.'}
+    </p>
+    <dl class="review-details" data-review-details></dl>
+    {email && (
+      <div class="email-draft-actions">
+        <p data-email-note class="email-note"></p>
+        <a
+          class="submit-button email-draft-link"
+          href={`mailto:${email}`}
+          data-email-draft
+        >
+          Open email draft
+        </a>
+        <p class="email-help">
+          If no email app opens, download your request and attach it to an email
+          to <a href={`mailto:${email}`}>{email}</a>.
+        </p>
+      </div>
+    )}
+    <div class="review-actions">
+      <button type="button" class="submit-button" data-download>
+        Download request{' '}
+        <svg
+          viewBox="0 0 24 24"
+          width="19"
+          height="19"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M12 3v12m-4-4 4 4 4-4M5 16v5h14v-5"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <button type="button" class="edit-button" data-edit>
+        Edit details
+      </button>
+    </div>
+    <p class="download-status" role="status" data-download-status></p>
+  </section>
+</div>
+
+<script>
+  type QuoteField = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+
+  function initializeQuoteForms() {
+    document
+      .querySelectorAll<HTMLElement>('[data-quote-form]')
+      .forEach((root) => {
+        if (root.dataset.initialized) return;
+        const form = root.querySelector<HTMLFormElement>('form');
+        const content = root.querySelector<HTMLFieldSetElement>(
+          '[data-form-content]',
+        );
+        const review = root.querySelector<HTMLElement>('[data-review]');
+        const summary = root.querySelector<HTMLElement>('[data-error-summary]');
+        const errorList = root.querySelector<HTMLElement>('[data-error-list]');
+        const reviewDetails = root.querySelector<HTMLElement>(
+          '[data-review-details]',
+        );
+        if (
+          !form ||
+          !content ||
+          !review ||
+          !summary ||
+          !errorList ||
+          !reviewDetails
+        )
+          return;
+
+        // Radios and checkboxes are summarised as groups, so they are excluded
+        // from the per-field validation pass.
+        const fields = Array.from(
+          form.querySelectorAll<QuoteField>('input, textarea, select'),
+        ).filter(
+          (field) =>
+            !(
+              field instanceof HTMLInputElement &&
+              (field.type === 'radio' || field.type === 'checkbox')
+            ),
+        );
+        const labels: Record<string, string> = {
+          route_type: 'Route',
+          pickup_city: 'Pickup city',
+          pickup_region: 'Pickup province / state',
+          pickup_postal: 'Pickup postal / ZIP',
+          pickup_country: 'Pickup country',
+          delivery_city: 'Delivery city',
+          delivery_region: 'Delivery province / state',
+          delivery_postal: 'Delivery postal / ZIP',
+          delivery_country: 'Delivery country',
+          commodity: 'Commodity',
+          piece_count: 'Pallet / package count',
+          stackable: 'Stackable',
+          dimensions: 'Dimensions',
+          dimension_unit: 'Dimension unit',
+          weight: 'Total weight',
+          weight_unit: 'Weight unit',
+          equipment: 'Equipment or handling requests',
+          pickup_date: 'Preferred pickup date',
+          delivery_date: 'Requested delivery date',
+          name: 'Full name',
+          company: 'Company',
+          email: 'Email address',
+          phone: 'Phone',
+          details: 'Additional notes',
+        };
+        const localToday = () => {
+          const now = new Date();
+          return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        };
+        const named = (name: string) => form.elements.namedItem(name);
+        const input = (name: string) => named(name) as HTMLInputElement;
+        const value = (name: string) => {
+          const element = named(name) as { value?: unknown } | null;
+          return typeof element?.value === 'string' ? element.value.trim() : '';
+        };
+        const pickupDate = input('pickup_date');
+        const deliveryDate = input('delivery_date');
+        pickupDate.min = localToday();
+        deliveryDate.min = localToday();
+
+        // Prefill from a service CTA or the route planner. Only parameters that
+        // are present are applied, so no other entered information is cleared.
+        const params = new URLSearchParams(window.location.search);
+        for (const name of [
+          'pickup_city',
+          'pickup_region',
+          'pickup_postal',
+          'pickup_country',
+          'delivery_city',
+          'delivery_region',
+          'delivery_postal',
+          'delivery_country',
+        ]) {
+          const supplied = params.get(name);
+          const field = named(name);
+          if (!supplied || !(field instanceof HTMLInputElement)) continue;
+          const limit = field.maxLength > 0 ? field.maxLength : undefined;
+          field.value = supplied.trim().slice(0, limit);
+        }
+        const shipmentType = params.get('shipment_type');
+        if (shipmentType) {
+          form
+            .querySelectorAll<HTMLInputElement>('input[name="shipment_type"]')
+            .forEach((radio) => {
+              if (radio.value === shipmentType) radio.checked = true;
+            });
+        }
+        for (const name of ['route_type', 'stackable']) {
+          const supplied = params.get(name);
+          const field = named(name);
+          if (!supplied || !(field instanceof HTMLSelectElement)) continue;
+          if (
+            Array.from(field.options).some(
+              (option) => option.value === supplied,
+            )
+          )
+            field.value = supplied;
+        }
+
+        let reviewText = '';
+        let submitted = false;
+
+        const validationMessage = (field: QuoteField): string => {
+          const entry = field.value.trim();
+          if (field.required && !entry)
+            return `Please enter your ${labels[field.name].toLowerCase()}.`;
+          if (field.name === 'email' && entry && field.validity.typeMismatch)
+            return 'Enter a valid email address, such as you@company.com.';
+          if (field.name === 'pickup_date' && entry) {
+            pickupDate.min = localToday();
+            if (
+              pickupDate.validity.badInput ||
+              !/^\d{4}-\d{2}-\d{2}$/.test(entry)
+            )
+              return 'Enter a valid pickup date.';
+            if (entry < localToday())
+              return 'Choose today or a future pickup date.';
+          }
+          if (field.name === 'delivery_date' && entry) {
+            if (
+              deliveryDate.validity.badInput ||
+              !/^\d{4}-\d{2}-\d{2}$/.test(entry)
+            )
+              return 'Enter a valid delivery date.';
+            if (entry < localToday())
+              return 'Choose today or a future delivery date.';
+            const pickup = pickupDate.value.trim();
+            if (pickup && entry < pickup)
+              return 'Choose a delivery date on or after the pickup date.';
+          }
+          if (field.name === 'weight' && (entry || field.validity.badInput)) {
+            if (
+              !Number.isFinite(Number(entry)) ||
+              Number(entry) <= 0 ||
+              field.validity.badInput
+            )
+              return 'Enter a weight greater than zero, or leave this field blank.';
+          }
+          if (
+            field.name === 'piece_count' &&
+            (entry || field.validity.badInput)
+          ) {
+            if (
+              field.validity.badInput ||
+              !Number.isInteger(Number(entry)) ||
+              Number(entry) <= 0
+            )
+              return 'Enter a whole number greater than zero, or leave this field blank.';
+          }
+          if (field.validity.tooLong)
+            return 'Please shorten this entry to fit the field.';
+          return '';
+        };
+
+        const renderErrors = () => {
+          errorList.replaceChildren();
+          const invalid: QuoteField[] = [];
+          for (const field of fields) {
+            const message = validationMessage(field);
+            const error = document.getElementById(`${field.id}-error`);
+            if (error) {
+              error.textContent = message;
+              error.hidden = !message;
+            }
+            if (message) {
+              field.setAttribute('aria-invalid', 'true');
+              invalid.push(field);
+              const item = document.createElement('li');
+              const link = document.createElement('a');
+              link.href = `#${field.id}`;
+              link.textContent = `${labels[field.name]}: ${message}`;
+              link.addEventListener('click', (event) => {
+                event.preventDefault();
+                field.focus();
+              });
+              item.append(link);
+              errorList.append(item);
+            } else {
+              field.removeAttribute('aria-invalid');
+            }
+          }
+          summary.hidden = invalid.length === 0;
+          return invalid;
+        };
+
+        /** Ordered label/value pairs for the review panel, email, and download. */
+        const summaryRows = () => {
+          const rows: [string, string][] = [];
+          const add = (label: string, entry: string) => {
+            if (entry) rows.push([label, entry]);
+          };
+          const optionText = (name: string) => {
+            const field = named(name);
+            return field instanceof HTMLSelectElement
+              ? field.selectedOptions[0]?.text || ''
+              : '';
+          };
+          const place = (prefix: string) =>
+            [
+              value(`${prefix}_city`),
+              value(`${prefix}_region`),
+              value(`${prefix}_postal`),
+              value(`${prefix}_country`),
+            ]
+              .filter(Boolean)
+              .join(', ');
+          const checkedType = form.querySelector<HTMLInputElement>(
+            'input[name="shipment_type"]:checked',
+          );
+
+          add(
+            'Shipment type',
+            checkedType?.closest('label')?.querySelector('strong')
+              ?.textContent || '',
+          );
+          add('Route', optionText('route_type'));
+          add('Pickup', place('pickup'));
+          add('Delivery', place('delivery'));
+          add('Commodity', value('commodity'));
+          add('Pallet / package count', value('piece_count'));
+          add(
+            'Dimensions',
+            value('dimensions')
+              ? `${value('dimensions')} ${value('dimension_unit')}`
+              : '',
+          );
+          add(
+            'Total weight',
+            value('weight') ? `${value('weight')} ${value('weight_unit')}` : '',
+          );
+          add('Stackable', optionText('stackable'));
+          add('Equipment or handling requests', value('equipment'));
+          add('Preferred pickup date', value('pickup_date'));
+          add('Requested delivery date', value('delivery_date'));
+          add(
+            'Location requirements (requests to assess)',
+            Array.from(
+              form.querySelectorAll<HTMLInputElement>(
+                '.checkbox-grid input[type="checkbox"]:checked',
+              ),
+            )
+              .map(
+                (box) =>
+                  box.closest('label')?.querySelector('span')?.textContent ||
+                  '',
+              )
+              .filter(Boolean)
+              .join('; '),
+          );
+          add('Full name', value('name'));
+          add('Company', value('company'));
+          add('Email address', value('email'));
+          add('Phone', value('phone'));
+          add('Additional notes', value('details'));
+          return rows;
+        };
+
+        form.addEventListener('submit', (event) => {
+          submitted = true;
+          if (renderErrors().length) {
+            event.preventDefault();
+            summary.focus();
+            return;
+          }
+          // A configured provider handles its own result page and delivery confirmation.
+          if (form.dataset.endpoint) return;
+          event.preventDefault();
+
+          reviewDetails.replaceChildren();
+          const lines = [
+            'UTOPIA LOGISTICS INC.',
+            'QUOTE REQUEST PREVIEW — NOT SENT',
+            '',
+          ];
+          for (const [label, entry] of summaryRows()) {
+            const row = document.createElement('div');
+            const term = document.createElement('dt');
+            const definition = document.createElement('dd');
+            term.textContent = label;
+            definition.textContent = entry;
+            row.append(term, definition);
+            reviewDetails.append(row);
+            lines.push(`${label}: ${entry}`);
+          }
+          lines.push(
+            '',
+            'This preview has not been submitted to Utopia Logistics Inc.',
+          );
+          reviewText = lines.join('\n');
+          const emailLink =
+            root.querySelector<HTMLAnchorElement>('[data-email-draft]');
+          const emailNote =
+            root.querySelector<HTMLElement>('[data-email-note]');
+          if (emailLink && emailNote && root.dataset.email) {
+            const subject =
+              'Freight quote enquiry — ' +
+              value('pickup_city') +
+              ' to ' +
+              value('delivery_city');
+            const body =
+              'Hello Utopia dispatch,\n\n' +
+              reviewText
+                .replace(
+                  'QUOTE REQUEST PREVIEW — NOT SENT',
+                  'FREIGHT QUOTE ENQUIRY',
+                )
+                .replace(
+                  'This preview has not been submitted to Utopia Logistics Inc.',
+                  'Please contact me to discuss this shipment.',
+                );
+            const draftUrl = `mailto:${root.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            const longRequest = draftUrl.length > 1800;
+            emailLink.href = longRequest
+              ? `mailto:${root.dataset.email}?subject=${encodeURIComponent('Freight quote enquiry')}&body=${encodeURIComponent('Hello Utopia dispatch,\n\nI would like to discuss a freight shipment. Please see my full quote request in the attached text file.\n\nPlease contact me to discuss the trip.')}`
+              : draftUrl;
+            emailLink.textContent = longRequest
+              ? 'Open email — attach downloaded request'
+              : 'Open email draft';
+            emailNote.textContent = longRequest
+              ? 'This request is too long for some email apps. Download the complete request below, then attach that file to the email before sending. The email draft does not include your shipment details.'
+              : 'Your email draft includes all the details below. Opening it does not send the request.';
+          }
+          content.hidden = true;
+          review.hidden = false;
+          root.querySelector<HTMLElement>('[data-review-heading]')?.focus();
+        });
+
+        form.addEventListener('input', () => {
+          if (submitted) renderErrors();
+        });
+        form.addEventListener('change', () => {
+          if (submitted) renderErrors();
+        });
+        root.querySelector('[data-edit]')?.addEventListener('click', () => {
+          review.hidden = true;
+          content.hidden = false;
+          const status = root.querySelector<HTMLElement>(
+            '[data-download-status]',
+          );
+          if (status) status.textContent = '';
+          form
+            .querySelector<HTMLInputElement>('input[name="shipment_type"]')
+            ?.focus();
+        });
+        root.querySelector('[data-download]')?.addEventListener('click', () => {
+          const url = URL.createObjectURL(
+            new Blob([reviewText], { type: 'text/plain;charset=utf-8' }),
+          );
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `utopia-quote-request-${localToday()}.txt`;
+          document.body.append(link);
+          link.click();
+          link.remove();
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+          const status = root.querySelector<HTMLElement>(
+            '[data-download-status]',
+          );
+          if (status)
+            status.textContent =
+              'Your download is ready. This request has not been sent.';
+        });
+        root.dataset.initialized = 'true';
+        content.disabled = false;
+      });
+  }
+
+  initializeQuoteForms();
+  document.addEventListener('astro:page-load', initializeQuoteForms);
+</script>
+
+<style>
+  .email-draft-actions {
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid #dce2e9;
+  }
+  .email-draft-link {
+    text-decoration: none;
+  }
+  .email-note {
+    font-size: 12px;
+    color: #5d6b7b;
+    line-height: 1.8;
+    margin: 0 0 16px;
+  }
+  .email-help {
+    font-size: 11px;
+    color: #5d6b7b;
+    line-height: 1.8;
+    margin-top: 14px;
+  }
+  .email-help a {
+    color: #3e5ba7;
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+  }
+  .quote-form {
+    width: 100%;
+    max-width: 740px;
+    padding: clamp(24px, 3vw, 42px);
+    border: 1px solid #e2e5e8;
+    border-radius: 5px;
+    background: #fff;
+    color: #142338;
+    box-shadow: 0 12px 50px #14233806;
+  }
+  .quote-form *,
+  .quote-form *::before,
+  .quote-form *::after {
+    box-sizing: border-box;
+  }
+  [hidden] {
+    display: none !important;
+  }
+  .form-intro {
+    margin-bottom: 27px;
+  }
+  .form-intro h3 {
+    margin: 0 0 7px;
+    font-size: clamp(21px, 2vw, 25px);
+    letter-spacing: -0.65px;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  .form-intro p {
+    margin: 0;
+    color: #68727e;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  fieldset {
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    border: 0;
+  }
+  .field-group + .field-group {
+    margin-top: 26px;
+    padding-top: 23px;
+    border-top: 1px solid #e8eaed;
+  }
+  .field-group > legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    margin-bottom: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    float: left;
+    width: 100%;
+  }
+  .field-group > legend + * {
+    clear: both;
+  }
+  .field-group > legend span {
+    color: #3e5ba7;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .group-note {
+    margin: 0 0 16px;
+    color: #5d6b7b;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .field-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 17px 18px;
+  }
+  .field {
+    min-width: 0;
+  }
+  .full-width {
+    grid-column: 1 / -1;
+  }
+  label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  label > span:not(.optional) {
+    color: #8a171b;
+  }
+  .optional {
+    color: #6c7480;
+    font-weight: 400;
+    font-size: 11px;
+  }
+  /* Shipment type radio cards */
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .choice {
+    position: relative;
+    display: block;
+    margin: 0;
+    border: 1px solid #dce0e5;
+    border-radius: 6px;
+    background: #fafbfc;
+    padding: 14px 15px;
+    cursor: pointer;
+    transition:
+      border-color 150ms,
+      background 150ms;
+  }
+  .choice:hover {
+    border-color: #a7b2c3;
+  }
+  .choice input {
+    position: absolute;
+    top: 14px;
+    left: 15px;
+    width: 16px;
+    height: 16px;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    accent-color: #3e5ba7;
+  }
+  .choice > span {
+    display: block;
+    padding-left: 25px;
+  }
+  .choice strong {
+    display: block;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .choice em {
+    display: block;
+    margin-top: 5px;
+    color: #5d6b7b;
+    font-size: 11px;
+    font-style: normal;
+    line-height: 1.6;
+  }
+  .choice:has(input:checked) {
+    border-color: #3e5ba7;
+    background: #f2f5fc;
+  }
+  .choice:has(input:focus-visible) {
+    outline: 3px solid #3e5ba7;
+    outline-offset: 3px;
+  }
+  /* Pickup and delivery columns */
+  .location-columns {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    margin-top: 18px;
+  }
+  .location-block {
+    padding: 17px;
+    border: 1px solid #e8eaed;
+    border-radius: 6px;
+  }
+  .location-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 14px;
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: #142338;
+  }
+  .route-marker {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    border-radius: 50%;
+    border: 2px solid #3e5ba7;
+  }
+  .route-marker.destination {
+    border-color: #52b849;
+    background: #52b849;
+  }
+  /* Location requirement checkboxes */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 11px 18px;
+  }
+  .check {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  .check input {
+    width: 17px;
+    height: 17px;
+    min-height: 0;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    accent-color: #3e5ba7;
+  }
+  input,
+  textarea,
+  select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border: 1px solid #dce0e5;
+    border-radius: 6px;
+    background: #fafbfc;
+    color: #142338;
+    padding: 12px 13px;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+    transition:
+      border-color 150ms,
+      box-shadow 150ms;
+  }
+  input:not([type='radio']):not([type='checkbox']),
+  select {
+    min-height: 45px;
+  }
+  input[type='radio'],
+  input[type='checkbox'] {
+    display: inline-block;
+    width: auto;
+    border: 0;
+    border-radius: 0;
+    background: none;
+  }
+  input[type='date'] {
+    appearance: none;
+  }
+  textarea {
+    min-height: 76px;
+    resize: vertical;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: #77818e;
+    opacity: 1;
+  }
+  input:hover,
+  textarea:hover,
+  select:hover {
+    border-color: #a7b2c3;
+  }
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 2px solid #3e5ba7;
+    outline-offset: 2px;
+    border-color: #3e5ba7;
+  }
+  [aria-invalid='true'] {
+    border-color: #a42a30;
+  }
+  .unit-field {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 65px;
+    gap: 7px;
+  }
+  .unit-field select {
+    padding-left: 11px;
+    padding-right: 5px;
+  }
+  .form-bottom {
+    margin-top: 26px;
+  }
+  .mode-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+    color: #5c6572;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .mode-note::before {
+    content: '';
+    flex: 0 0 5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #8a171b;
+  }
+  .submit-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 49px;
+    padding: 14px 20px;
+    border: 1px solid #3e5ba7;
+    border-radius: 5px;
+    background: #3e5ba7;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 150ms,
+      border-color 150ms;
+  }
+  .submit-button:hover {
+    background: #314a8a;
+    border-color: #314a8a;
+  }
+  button:focus-visible,
+  a:focus-visible,
+  [tabindex='-1']:focus-visible {
+    outline: 3px solid #3e5ba7;
+    outline-offset: 4px;
+  }
+  .field-hint {
+    margin: 6px 0 0;
+    color: #5d6b7b;
+    font-size: 11px;
+    line-height: 1.65;
+  }
+  .field-error {
+    margin: 6px 0 0;
+    color: #8a171b;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .error-summary {
+    margin-bottom: 24px;
+    padding: 15px 17px;
+    border-left: 3px solid #8a171b;
+    border-radius: 3px;
+    color: #8a171b;
+    background: #fff6f5;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .error-summary p {
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .error-summary ul {
+    padding-left: 19px;
+    margin: 0;
+  }
+  .error-summary li + li {
+    margin-top: 3px;
+  }
+  .error-summary a {
+    color: inherit;
+    text-underline-offset: 2px;
+  }
+  .no-script {
+    color: #8a171b;
+    font-size: 14px;
+  }
+  .review-icon {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 19px;
+    border-radius: 50%;
+    background: #edf1fa;
+    color: #3e5ba7;
+  }
+  .review-panel h4 {
+    margin: 0 0 10px;
+    font-size: 23px;
+    font-weight: 600;
+    letter-spacing: -0.6px;
+  }
+  .review-notice {
+    margin: 0 0 22px;
+    color: #616b79;
+    font-size: 13px;
+    line-height: 1.75;
+  }
+  .review-details {
+    margin: 0 0 25px;
+  }
+  .review-details :global(div) {
+    display: grid;
+    grid-template-columns: minmax(115px, 0.8fr) minmax(0, 1.2fr);
+    gap: 15px;
+    padding: 11px 0;
+    border-bottom: 1px solid #e6e9ee;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .review-details :global(dt) {
+    color: #67717e;
+  }
+  .review-details :global(dd) {
+    margin: 0;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+  .review-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .review-actions .submit-button {
+    width: auto;
+  }
+  .edit-button {
+    flex-shrink: 0;
+    padding: 10px 0;
+    border: 0;
+    background: transparent;
+    color: #3e5ba7;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+  .download-status {
+    color: #616b79;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (max-width: 720px) {
+    .choice-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .location-columns {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 520px) {
+    .quote-form {
+      padding: 24px 20px;
+    }
+    .field-grid {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+    .checkbox-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .location-block {
+      padding: 15px;
+    }
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
+    label {
+      font-size: 12px;
+    }
+    .review-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 9px;
+    }
+    .review-details :global(div) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    input,
+    textarea,
+    select,
+    .choice,
+    .submit-button {
+      transition: none;
+    }
+  }
+</style>

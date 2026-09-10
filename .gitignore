@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Local asset research and browser verification artifacts
+.asset-work/
+.qa/

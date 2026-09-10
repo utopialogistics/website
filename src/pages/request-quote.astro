@@ -1,0 +1,244 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title="Request a Freight Quote"
+  description="Prepare a freight quote request for Utopia Logistics. Share pickup and delivery locations, preferred dates, and shipment details with our dispatch team."
+>
+  <PageHero
+    eyebrow="Request a quote"
+    title={'Let’s get your next\nshipment moving.'}
+    description="Every shipment has a destination. Tell us yours, and share a few details about what you need to move."
+  />
+  <section class="section quote-page">
+    <div class="container quote-layout">
+      <aside class="quote-sidebar">
+        <p class="eyebrow">Your next move</p>
+        <h2>
+          From the details
+          <br />
+          to the discussion.
+        </h2>
+        <ol>
+          <li>
+            <span>01</span>
+            <div>
+              <strong>Tell us about the trip.</strong>
+              <p>Add your route, freight, and preferred dates.</p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <strong>Review your request.</strong>
+              <p>Check the details before sharing them.</p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <strong>
+                {site.quoteEndpoint
+                  ? 'Send your enquiry.'
+                  : 'Send it from your email app.'}
+              </strong>
+              <p>
+                {site.quoteEndpoint
+                  ? 'Dispatch will receive your enquiry through the connected form service.'
+                  : 'Open the prepared email, then review and send it to dispatch.'}
+              </p>
+            </div>
+          </li>
+        </ol>
+        <div class="quote-help">
+          <span class="green-dot"></span>
+          <h3>Prefer a conversation?</h3>
+          <a href={site.phoneHref}>
+            {site.phone} <Icon name="diagonal" size={15} />
+          </a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </div>
+        <p class="quote-disclaimer">
+          An enquiry does not confirm a booking, rate, or lane availability.
+          Shipment arrangements are confirmed with dispatch.
+        </p>
+        <a href="/faq/" class="text-link">
+          Quote questions, answered <Icon size={17} />
+        </a>
+      </aside>
+      <QuoteForm endpoint={site.quoteEndpoint} email={site.email} />
+    </div>
+  </section>
+</Layout>
+<style>
+  .quote-page {
+    background: var(--light);
+    padding-top: 64px;
+  }
+  .quote-layout {
+    display: grid;
+    grid-template-columns: 0.75fr 1.3fr;
+    gap: 100px;
+    align-items: start;
+  }
+  .quote-sidebar {
+    position: sticky;
+    top: 125px;
+  }
+  .quote-sidebar h2 {
+    font-size: 34px;
+    font-weight: 550;
+    letter-spacing: -1.1px;
+    line-height: 1.3;
+    margin-top: 19px;
+  }
+  .quote-sidebar ol {
+    list-style: none;
+    margin: 32px 0 0;
+    padding: 0;
+  }
+  .quote-sidebar li {
+    display: flex;
+    gap: 18px;
+    margin-top: 27px;
+  }
+  .quote-sidebar li > span {
+    font-size: 10px;
+    color: var(--burgundy);
+    font-weight: 650;
+    line-height: 2;
+  }
+  .quote-sidebar li strong {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .quote-sidebar li p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 7px;
+    line-height: 1.8;
+  }
+  .quote-help {
+    margin-top: 36px;
+    padding: 26px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    position: relative;
+  }
+  .quote-help > .green-dot {
+    position: absolute;
+    right: 25px;
+    top: 32px;
+  }
+  .quote-help h3 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    margin-bottom: 18px;
+  }
+  .quote-help a {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--blue);
+    margin-top: 12px;
+    overflow-wrap: anywhere;
+  }
+  .quote-help a:first-of-type {
+    font-size: 17px;
+  }
+  .quote-disclaimer {
+    font-size: 10px;
+    line-height: 1.85;
+    color: var(--muted);
+    margin-top: 24px;
+  }
+  .quote-sidebar > .text-link {
+    font-size: 11px;
+    margin-top: 24px;
+  }
+  @media (max-width: 1100px) {
+    .quote-layout {
+      gap: 55px;
+      grid-template-columns: 0.75fr 1.2fr;
+    }
+    .quote-sidebar h2 {
+      font-size: 30px;
+    }
+  }
+  @media (max-width: 800px) {
+    .quote-layout {
+      grid-template-columns: 1fr;
+      gap: 35px;
+    }
+    .quote-sidebar {
+      position: static;
+    }
+    .quote-sidebar ol {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-top: 25px;
+    }
+    .quote-sidebar li {
+      display: block;
+      margin-top: 0;
+    }
+    .quote-sidebar li > span {
+      display: block;
+      margin-bottom: 9px;
+    }
+    .quote-sidebar li strong {
+      font-size: 12px;
+    }
+    .quote-sidebar li p {
+      font-size: 11px;
+    }
+    .quote-help {
+      display: none;
+    }
+    .quote-sidebar > .text-link {
+      display: none;
+    }
+    .quote-disclaimer {
+      max-width: 550px;
+      font-size: 10px;
+    }
+    .quote-sidebar h2 {
+      font-size: 32px;
+    }
+    .quote-page {
+      padding-top: 45px;
+    }
+  }
+  @media (max-width: 480px) {
+    .quote-sidebar ol {
+      grid-template-columns: 1fr;
+      gap: 17px;
+    }
+    .quote-sidebar li {
+      display: flex;
+      gap: 16px;
+    }
+    .quote-sidebar li > span {
+      margin-bottom: 0;
+    }
+    .quote-sidebar li p {
+      font-size: 11px;
+      margin-top: 4px;
+    }
+    .quote-sidebar h2 {
+      font-size: 30px;
+    }
+    .quote-page {
+      padding-top: 37px;
+    }
+  }
+</style>

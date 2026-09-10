@@ -1,0 +1,174 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { faqs } from '../data/content';
+const groups = ['Getting started', 'Coverage & services', 'Your quote request'];
+---
+
+<Layout
+  title="Freight & Shipping FAQs"
+  description="Find answers about freight quote requests, North American trucking coverage, shipment details, and contacting Utopia Logistics dispatch."
+>
+  <PageHero
+    eyebrow="Frequently asked questions"
+    title={'Good questions.\nA clearer road ahead.'}
+    description="A few useful answers before you plan your shipment. For questions about your specific trip, our dispatch team is the place to start."
+  />
+  <section class="section">
+    <div class="container faq-page-grid">
+      <aside>
+        <span class="eyebrow">Find your answer</span>
+        <nav aria-label="FAQ categories">
+          {groups.map((group, index) => (
+            <a href={`#faq-group-${index}`}>
+              {group}
+              <Icon size={16} />
+            </a>
+          ))}
+        </nav>
+        <div class="faq-help">
+          <Icon name="mail" size={27} />
+          <h2>
+            Something else
+            <br />
+            on your mind?
+          </h2>
+          <p>Talk to us about the details of your shipment.</p>
+          <a href="/contact/" class="text-link">
+            Contact dispatch <Icon size={17} />
+          </a>
+        </div>
+      </aside>
+      <div>
+        {groups.map((group, index) => (
+          <section class="faq-group" id={`faq-group-${index}`}>
+            <h2>{group}</h2>
+            <FaqList items={faqs.filter((faq) => faq.category === group)} />
+          </section>
+        ))}
+      </div>
+    </div>
+  </section>
+  <CtaBand />
+</Layout>
+<style>
+  .faq-page-grid {
+    display: grid;
+    grid-template-columns: 0.65fr 1.55fr;
+    gap: 90px;
+    align-items: start;
+  }
+  .faq-page-grid aside {
+    position: sticky;
+    top: 123px;
+  }
+  .faq-page-grid aside nav {
+    display: flex;
+    flex-direction: column;
+    margin-top: 22px;
+  }
+  .faq-page-grid aside nav a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-block: 18px;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px;
+  }
+  .faq-page-grid aside nav a:hover {
+    color: var(--blue);
+  }
+  .faq-help {
+    margin-top: 34px;
+    background: var(--light);
+    padding: 28px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  .faq-help > svg {
+    color: var(--blue);
+    margin-bottom: 22px;
+  }
+  .faq-help h2 {
+    font-size: 25px;
+    line-height: 1.3;
+    letter-spacing: -0.7px;
+    font-weight: 550;
+  }
+  .faq-help p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 15px;
+  }
+  .faq-help .text-link {
+    font-size: 11px;
+    margin-top: 22px;
+    gap: 15px;
+  }
+  .faq-group + .faq-group {
+    margin-top: 53px;
+  }
+  .faq-group > h2 {
+    font-size: 27px;
+    font-weight: 550;
+    letter-spacing: -0.7px;
+    margin-bottom: 25px;
+  }
+  @media (max-width: 980px) {
+    .faq-page-grid {
+      gap: 45px;
+      grid-template-columns: 0.7fr 1.3fr;
+    }
+    .faq-help {
+      padding: 23px;
+    }
+    .faq-help h2 {
+      font-size: 22px;
+    }
+  }
+  @media (max-width: 700px) {
+    .faq-page-grid {
+      grid-template-columns: 1fr;
+      gap: 35px;
+    }
+    .faq-page-grid aside {
+      position: static;
+    }
+    .faq-help {
+      display: none;
+    }
+    .faq-page-grid aside nav {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 17px;
+    }
+    .faq-page-grid aside nav a {
+      font-size: 11px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      gap: 12px;
+    }
+    .faq-page-grid aside nav svg {
+      display: none;
+    }
+    .faq-group > h2 {
+      font-size: 25px;
+    }
+  }
+  @media (max-width: 480px) {
+    .faq-page-grid aside nav {
+      gap: 10px;
+    }
+    .faq-page-grid aside nav a {
+      font-size: 10px;
+    }
+    .faq-group + .faq-group {
+      margin-top: 37px;
+    }
+  }
+</style>

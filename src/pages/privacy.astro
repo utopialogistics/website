@@ -1,0 +1,135 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import { site } from '../data/site';
+---
+
+<Layout
+  title="Website Privacy"
+  description="How the Utopia Logistics website handles information when you prepare a freight enquiry, open an email draft, or follow a map link."
+>
+  <PageHero
+    eyebrow="Privacy"
+    title={'Your information.\nYour next enquiry.'}
+    description="A plain-language explanation of how this website handles the details you choose to share."
+  />
+  <section class="section">
+    <div class="container privacy-content">
+      <section>
+        <h2>Preparing a quote request</h2>
+        <p>
+          The quote form asks for your name, company, email, shipment route,
+          preferred date, and freight description. Phone, estimated weight, and
+          additional details are optional. These details help describe the
+          shipment you want to discuss.
+        </p>
+        {site.quoteEndpoint ? (
+          <p>
+            When you submit the form, your information is sent to the connected
+            enquiry service for processing. Its response page provides the
+            submission result. Contact dispatch if you need to verify that your
+            enquiry was received.
+          </p>
+        ) : (
+          <p>
+            Preparing and reviewing a request happens in your browser. The
+            website does not send those form details to dispatch automatically
+            or save them in browser storage. Refreshing or leaving the page may
+            clear your entries.
+          </p>
+        )}
+      </section>
+      <section>
+        <h2>Email drafts and downloads</h2>
+        <p>
+          Opening a prepared email passes its contents to your email app. You
+          decide whether to send it. Once sent, the information is handled
+          through the email services used by you and Utopia Logistics. A
+          downloaded request is a text file saved by your browser; you control
+          where you keep or share it.
+        </p>
+        <p>
+          For a longer request, the website asks you to download the full text
+          and attach it to your email. No shipment information needs to be
+          omitted from your enquiry.
+        </p>
+      </section>
+      <section>
+        <h2>Links and website resources</h2>
+        <p>
+          The site’s fonts, photographs, and map illustration are served as part
+          of the website. No advertising trackers, analytics scripts, or
+          embedded third-party maps have been added to this build.
+        </p>
+        <p>
+          Choosing “Get directions” opens Google Maps. That service handles
+          information according to its own privacy practices. Phone and email
+          links open the relevant app on your device. Website hosting and
+          network providers may process technical request information needed to
+          serve the site.
+        </p>
+      </section>
+      <section>
+        <h2>Questions about your information</h2>
+        <p>
+          For questions about information you have shared with Utopia Logistics,
+          including an enquiry you want to correct or discuss, contact{' '}
+          <a href={`mailto:${site.email}`}>{site.email}</a> or{' '}
+          <a href={site.phoneHref}>{site.phone}</a>. Include enough context for
+          the team to identify your enquiry.
+        </p>
+        <address>
+          {site.name}
+          <br />
+          {site.street}
+          <br />
+          {site.locality}
+          <br />
+          Canada
+        </address>
+      </section>
+    </div>
+  </section>
+</Layout>
+<style>
+  .privacy-content {
+    max-width: 820px;
+  }
+  .privacy-content > section + section {
+    margin-top: 40px;
+    padding-top: 35px;
+    border-top: 1px solid var(--line);
+  }
+  .privacy-content h2 {
+    font-size: 28px;
+    font-weight: 550;
+    letter-spacing: -0.7px;
+    line-height: 1.4;
+  }
+  .privacy-content p {
+    font-size: 14px;
+    line-height: 1.95;
+    color: var(--muted);
+    margin-top: 20px;
+  }
+  .privacy-content a {
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    overflow-wrap: anywhere;
+  }
+  .privacy-content address {
+    font-style: normal;
+    font-size: 13px;
+    line-height: 1.9;
+    margin-top: 23px;
+  }
+  @media (max-width: 480px) {
+    .privacy-content h2 {
+      font-size: 24px;
+    }
+    .privacy-content p {
+      font-size: 13px;
+    }
+  }
+</style>

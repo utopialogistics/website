@@ -1,0 +1,68 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  eyebrow: string;
+  title: string;
+  description: string;
+  image?: string;
+  alt?: string;
+  parent?: string;
+  parentHref?: string;
+  /** Optional primary action rendered under the lead paragraph. */
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+const {
+  eyebrow,
+  title,
+  description,
+  image,
+  alt = '',
+  parent,
+  parentHref,
+  ctaLabel,
+  ctaHref,
+} = Astro.props;
+---
+
+<section class:list={['page-hero', { 'page-hero-image': image }]}>
+  <div class="container">
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      {parent && (
+        <>
+          <a href={parentHref}>{parent}</a>
+          <span aria-hidden="true">/</span>
+        </>
+      )}
+      <span aria-current="page">{eyebrow}</span>
+    </nav>
+    <div class="page-hero-grid">
+      <div>
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        <p class="page-lead">{description}</p>
+        {ctaLabel && ctaHref && (
+          <a href={ctaHref} class="button button-primary page-hero-cta">
+            {ctaLabel} <Icon size={18} />
+          </a>
+        )}
+      </div>
+      {image && (
+        <div class="page-hero-visual">
+          <img
+            src={image}
+            alt={alt}
+            width="1100"
+            height="880"
+            fetchpriority="high"
+          />
+          <span class="image-corner" aria-hidden="true">
+            UTOPIA / ON THE ROAD
+          </span>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
