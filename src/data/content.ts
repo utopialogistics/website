@@ -221,7 +221,7 @@ export const faqs = [
     category: 'Getting started',
     question: 'How do I request a freight quote?',
     answer:
-      'Use the Request a Quote page to enter your shipment type, pickup and delivery locations, freight details, preferred dates, and contact information. You will see a review screen with everything you entered; press Send Request to Dispatch and it reaches our team directly. You can also email dispatch@utopialogistics.ca or call +1 (437) 484-0017.',
+      'Use the Request a Quote page to enter your shipment type, pickup and delivery locations, freight details, preferred dates, and contact information. You will see a review screen with everything you entered; press Send Request to Dispatch and it reaches our team directly. You can also email dispatch@utopialogistics.ca or call +1 (905) 486-1738.',
   },
   {
     category: 'Getting started',
@@ -281,6 +281,6 @@ export const faqs = [
     category: 'Your quote request',
     question: 'Can I change details after sending an enquiry?',
     answer:
-      'Yes. Email dispatch@utopialogistics.ca or call +1 (437) 484-0017 with the original pickup and delivery locations and the details that have changed, so the team can identify your enquiry. You can also send a fresh request and say that it replaces the earlier one.',
+      'Yes. Email dispatch@utopialogistics.ca or call +1 (905) 486-1738 with the original pickup and delivery locations and the details that have changed, so the team can identify your enquiry. You can also send a fresh request and say that it replaces the earlier one.',
   },
 ];

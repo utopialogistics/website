@@ -95,7 +95,7 @@ try {
           );
           assert.ok(
             checks.phones.length &&
-              checks.phones.every((link) => link === 'tel:+14374840017'),
+              checks.phones.every((link) => link === 'tel:+19054861738'),
           );
           assert.ok(
             checks.emails.length &&
